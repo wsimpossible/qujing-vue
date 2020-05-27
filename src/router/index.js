@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Login from '@/components/Login'
 import Register from '@/components/Register'
+import Forget from '@/components/Forget'
 import AdminLogin from '@/components/AdminLogin'
 import AdminIndex from '@/components/admin/AdminIndex'
 import UserManage from '@/components/admin/UserManage'
@@ -14,6 +15,8 @@ import FeedbackDetail from '@/components/admin/FeedbackDetail'
 import UserIndex from '@/components/user/UserIndex'
 import Charge from '@/components/user/Charge'
 import Postal from '@/components/user/Postal'
+import News from '@/components/user/News'
+import NewsDetail from '@/components/user/NewsDetail'
 import Release from '@/components/user/Release'
 import Accept from '@/components/user/Accept'
 import Myrelease from '@/components/user/Myrelease'
@@ -34,6 +37,11 @@ export default new Router({
         name: 'Register',
         component: Register
       },
+      {
+          path: '/forget',
+          name: 'Forget',
+          component: Forget
+        },
     {
         path: '/adminlogin',
         name: 'AdminLogin',
@@ -59,6 +67,16 @@ export default new Router({
           name: 'Postal',
           component: Postal
         },
+        {
+            path: '/userindex/newsdetail',
+            name: 'NewsDetail',
+            component: NewsDetail
+          },
+          {
+              path: '/userindex/news',
+              name: 'News',
+              component: News
+            },
         {
             path: '/userindex/release',
             name: 'Release',

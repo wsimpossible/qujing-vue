@@ -27,7 +27,7 @@
       <el-button type="primary" class="mainbt" @click="myrelease()"> 我发布的任务 </el-button>
       <el-button type="primary" class="mainbt" @click="myaccept()"> 我接受的任务 </el-button>
       </div>
-      <el-button  type="text" >查看通知</el-button>
+      <el-button  type="text" @click="listnews()">查看通知</el-button>
       </el-main>
     </el-container>
   </el-container>
@@ -83,7 +83,10 @@ export default {
     },
     myaccept(){
     this.$router.push('/userindex/myaccept');
-    }
+    },
+    listnews(){
+    this.$router.push('/userindex/news');
+    },
     }
     
     

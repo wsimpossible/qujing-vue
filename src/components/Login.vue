@@ -2,7 +2,7 @@
   <div class="main" style="border:2px solid #C0C0C0;border-radius:10px;height: 600px; width: 1200px; margin: auto">
     <div style="width: 500px; margin: auto">
     <h3>取经系统登录</h3>
-    <el-form ref="form" :model="form" label-width="80px">
+    <el-form ref="form" :model="form" rules="rules" label-width="80px">
   <el-form-item label="用户名：">
     <el-input  v-model="form.username"></el-input>
   </el-form-item>
@@ -42,7 +42,19 @@ export default {
           password: '',
           
         },
-        session:''
+        session:'',
+        rules: {
+          username: [
+            { required: true, message: '请输入用户名', trigger: 'blur' },
+            {  max: 30, message: '长度小于30个字符', trigger: 'blur' }
+          ],
+          taskDetail: [
+            { required: true, message: '请输入密码', trigger: 'blur' },
+            { max: 30, message: '长度小于30个字符', trigger: 'blur' }
+          ]
+        }
+        
+        
       }
     },
     methods: {
