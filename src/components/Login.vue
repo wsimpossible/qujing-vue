@@ -17,7 +17,6 @@
 </el-form>
 
     <router-link to="/adminlogin">我是管理员</router-link>
-    <router-link to="/userindex">进入用户主页（供测试使用）</router-link>
     </div>
   </div>
 </template>
@@ -67,8 +66,6 @@ export default {
           const authorization = res.data.Authorization;
           console.log(authorization)
         if (authorization != null && authorization != undefined) {
-          localStorage.setItem('token',authorization);
-          this.msg = authorization;
        
     	this.$router.push('userindex');
 		} else { 

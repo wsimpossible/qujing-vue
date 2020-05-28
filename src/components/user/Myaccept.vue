@@ -158,9 +158,7 @@ export default {
     },
     //初始化任务列表
     created: function () {
-     var token = localStorage.getItem('token');
-    axios.defaults.headers.common['Authorization'] = token;
-    axios.defaults.headers.common['Content-Type'] = 'application/json';
+     
     var sendJson = this.start;
     console.log(sendJson);
       var self=this;

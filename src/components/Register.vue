@@ -4,8 +4,12 @@
     <h3>取经系统注册</h3>
     
     <el-form ref="form" :model="form" label-width="80px">
-    <el-form-item label="邮箱：">
-    <el-input  v-model="form.email"></el-input>
+    <el-form-item label="手机号：">
+    <el-input  v-model="form.phone"></el-input>
+    <el-button type="primary" @click="getExam">  获取验证码  </el-button>
+  </el-form-item>
+  <el-form-item label="验证码：">
+    <el-input  v-model="form.examId"></el-input>
   </el-form-item>
   <el-form-item label="学号：">
     <el-input  v-model="form.studentId"></el-input>
@@ -14,10 +18,10 @@
     <el-input  v-model="form.username"></el-input>
   </el-form-item>
   <el-form-item label="密码：">
-    <el-input v-model="form.password"></el-input>
+    <el-input v-model="form.password" show-password></el-input>
   </el-form-item>
-  <el-form-item label="确认密码：">
-    <el-input  v-model="form.repasswd"></el-input>
+  <el-form-item label="确认密码："  >
+    <el-input  v-model="form.repasswd" :rules="{validator: rule_repasswd,trigger: 'blur'}" show-password></el-input>
   </el-form-item>
   <el-form-item>
   <el-button type="primary" @click="onSubmit">  注册 </el-button>
@@ -42,7 +46,8 @@ export default {
   data() {
       return {
         form: {
-          email:'',
+          phone:'',
+          examId:'',
           studentId:'',
           username: '',
           password: '',
@@ -51,9 +56,9 @@ export default {
         },
         session:'',
         rules: {
-          email: [
-            { required: true, message: '请输入邮箱', trigger: 'blur' },
-            {  max: 30, message: '长度小于30个字符', trigger: 'blur' }
+          phone: [
+            { required: true, message: '请输入手机号码', trigger: 'blur' },
+            {  max: 30, message: '长度小于22个字符', trigger: 'blur' }
           ],
           username: [
             { required: true, message: '请输入用户名', trigger: 'blur' },
@@ -63,13 +68,15 @@ export default {
             { required: true, message: '请输入密码', trigger: 'blur' },
             {  max: 30, message: '长度小于30个字符', trigger: 'blur' }
           ],
-          repasswd: [
-            { required: true, message: '请再次输入密码', trigger: 'blur' },
-            {  max: 30, message: '长度小于30个字符', trigger: 'blur' }
-          ],
+          
           studentId: [
             { required: true, message: '请输入学号', trigger: 'blur' },
             { max: 30, message: '长度小于20个字符', trigger: 'blur' }
+          ],
+          
+          examId: [
+            { required: true, message: '验证码', trigger: 'blur' },
+            { max: 10, message: '长度小于10个字符', trigger: 'blur' }
           ]
         }
         
@@ -77,6 +84,17 @@ export default {
       }
     },
     methods: {
+    rule_repasswd(rule,value,callback) {
+                console.log(value);
+                // 密码不能为空
+                if (!value) {
+                    return callback(new Error('请输入密码'));
+                };
+                if(value!=this.password){
+                    return callback(new Error('两次密码不同！'));
+                };
+                callback();
+            },
     //处理注册
       onSubmit() {
   var sendJson = this.form;

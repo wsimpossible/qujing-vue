@@ -46,11 +46,17 @@ export default {
     
       onSubmit() {
       var sendJson = this.form;
+      axios.defaults.crossDomain = true;
+   axios.defaults.withCredentials = true; 
       axios.post('http://49.234.86.39:8081/qujin/client/jsonLogin',sendJson)
         .then((response) => {
         this.session = response.data
-          if(this.session.msg.username=="admin")
-          {this.$router.push('adminindex');}
+          if(this.session=="success")
+          {
+          const authorization = response.data.Authorization;
+          axios.defaults.headers.common['Authorization'] = authorization;
+          this.$router.push('admin');
+          }
           else{
           this.$message({
           showClose: true,
