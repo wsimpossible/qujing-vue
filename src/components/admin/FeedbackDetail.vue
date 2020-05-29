@@ -122,7 +122,7 @@ export default {
   name: 'ReportDetail',
   data() {
       return {
-      url:require('../assets/logo.png'),
+      url:require('@/assets/logo.png'),
       detail:'',
       ID:''
     }

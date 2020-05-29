@@ -88,7 +88,7 @@ export default {
   name: 'Release',
   data() {
       return {
-        url:require('../assets/logo.png'),
+        url:require('@/assets/logo.png'),
         form: {
           taskName: '',
           taskDetail: '',

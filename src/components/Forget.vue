@@ -9,7 +9,7 @@
     <el-button type="primary" @click="getExam">  获取验证码  </el-button>
   </el-form-item>
   <el-form-item label="验证码：">
-    <el-input  v-model="form.examId"></el-input>
+    <el-input  v-model="form.check"></el-input>
   </el-form-item>
   <el-form-item label="学号：">
     <el-input  v-model="form.studentId"></el-input>
@@ -18,7 +18,7 @@
     <el-input  v-model="form.username"></el-input>
   </el-form-item>
   <el-form-item label="新密码：" >
-    <el-input v-model="form.password" show-password></el-input>
+    <el-input v-model="form.newPwd" show-password></el-input>
   </el-form-item>
   <el-form-item label="确认新密码："  >
     <el-input  v-model="form.repasswd" :rules="{validator: rule_repasswd,trigger: 'blur'}" show-password></el-input>
@@ -47,13 +47,14 @@ export default {
       return {
         form: {
           phone:'',
-          examId:'',
+          check:'',
           studentId:'',
           username: '',
-          password: '',
+          newPwd: '',
           repasswd:''
           
         },
+        examphone:{phone:''},
         session:'',
         rules: {
           phone: [
@@ -64,7 +65,7 @@ export default {
             { required: true, message: '请输入用户名', trigger: 'blur' },
             {  max: 30, message: '长度小于30个字符', trigger: 'blur' }
           ],
-          password: [
+          newPwd: [
             { required: true, message: '请输入密码', trigger: 'blur' },
             {  max: 30, message: '长度小于30个字符', trigger: 'blur' }
           ],
@@ -90,25 +91,44 @@ export default {
                 if (!value) {
                     return callback(new Error('请输入密码'));
                 };
-                if(value!=this.password){
+                if(value!=this.newPwd){
                     return callback(new Error('两次密码不同！'));
                 };
                 callback();
+            },
+            getExam(){
+            var self=this;
+            this.examphone.phone=this.form.phone
+            this.$http.post('/user/checkPhone',self.examphone).then(res=>{
+            if(res.data.code=="200")
+            self.$http.post('/authenticated/sendCaptcha',self.examphone).then(res=>{
+    	self.$message({
+      showClose: true,
+      message: '验证码已发送，请注意查收'
+    });
+    	}).catch(error=>{});
+            
+            
+    else{
+    	self.$message({
+      showClose: true,
+      message: '手机号未注册'
+    });
+    }
+            }).catch(error=>{});
+            
+            
             },
     //处理忘记密码
       onSubmit() {
   var sendJson = this.form;
   var self=this;
-  axios.post('http://49.234.86.39:8081/qujin/client/user/register',sendJson,{headers:{'Content-Type':'application/json'}})
-    .then(response => {
-    self.session= response.data;
-    console.log(self.session)
-    })
-    .catch((error) => {
-      console.log(error)
-    });
-    console.log('submit!');
-    if (self.session=="success") {
+  this.$http.post('/authenticated/verifyCaptcha',sendJson)
+  .then(res=>{
+  if (res.data.code=="200") {
+  this.$http.post('/authenticated/forgetPwd',sendJson)
+  .then(res=>{
+  if (res.data.code=="200") {
   this.$message({
       showClose: true,
       message: '密码修改成功'
@@ -121,6 +141,19 @@ export default {
       message: '密码修改失败'
     });
   }
+  })
+  .catch(error=>{});
+}  else { 
+    this.$message({
+      showClose: true,
+      message: '验证码错误'
+    });
+  }
+  })
+  .catch(error=>{});
+  
+  
+    
   }
     },
 }

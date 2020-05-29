@@ -152,7 +152,7 @@ export default {
       visible4: false,
       visible5: false,
       currentPage: 1,
-      url:require('../assets/logo.png'),
+      url:require('@/assets/logo.png'),
         tableData:'',
         dialogFormVisible: false,
         upform: {

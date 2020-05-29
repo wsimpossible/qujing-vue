@@ -2,7 +2,7 @@
   <div class="main" style="border:2px solid #C0C0C0;border-radius:10px;height: 600px; width: 1200px; margin: auto">
     <div style="width: 500px; margin: auto">
     <h3>取经系统登录</h3>
-    <el-form ref="form" :model="form" rules="rules" label-width="80px">
+    <el-form ref="form" :model="form" :rules="rules" label-width="80px">
   <el-form-item label="用户名：">
     <el-input  v-model="form.username"></el-input>
   </el-form-item>
@@ -61,25 +61,23 @@ export default {
       onSubmit() {
       var sendJson =this.form;
       var self=this;
-      axios.post('http://49.234.86.39:8081/qujin/client/jsonLogin',sendJson,{headers:{'Content-Type':'application/json'}})
-        .then(res => {
-          const authorization = res.data.Authorization;
-          console.log(authorization)
-        if (authorization != null && authorization != undefined) {
+      this.$http.post('/authenticated/loginByStudentId',sendJson)
+      .then(response=>{
+      console.log(response.data.code);
+      if (response.data.code=='200') {
        
-    	this.$router.push('userindex');
+    	self.$router.push('userindex');
 		} else { 
-    		this.$message({
+    		self.$message({
           showClose: true,
           message: '用户名或密码错误'
         });
 		}
-        })
-        .catch((error) => {
-          console.log(error)
-        })
-
-        console.log('submit!');
+      })
+      .catch(error=>{
+      
+      });
+		console.log('submit!');
       },
       onReg() {
       this.$router.push('register');

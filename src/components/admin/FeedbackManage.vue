@@ -121,7 +121,7 @@ export default {
   data() {
       return {
       currentPage: 1,
-      url:require('../assets/logo.png'),
+      url:require('@/assets/logo.png'),
         tableData:''
       }
     },

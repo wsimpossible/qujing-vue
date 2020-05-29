@@ -111,7 +111,7 @@ export default {
   name: 'Accept',
   data() {
       return {
-        url:require('../assets/logo.png'),
+        url:require('@/assets/logo.png'),
         visible: false,
          tableData:'',
         pos:{start:'0'},

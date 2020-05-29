@@ -175,7 +175,7 @@ export default {
       dialogVisible:false,
       dialogFormVisible1:false,
       dialogFormVisible2:false,
-        url:require('../assets/logo.png'),
+        url:require('@/assets/logo.png'),
         visible: false,
          tableData1:[{
           rank: '',

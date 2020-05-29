@@ -47,7 +47,6 @@ export default {
       onSubmit() {
       var sendJson = this.form;
       axios.defaults.crossDomain = true;
-   axios.defaults.withCredentials = true; 
       axios.post('http://49.234.86.39:8081/qujin/client/jsonLogin',sendJson)
         .then((response) => {
         this.session = response.data

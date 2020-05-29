@@ -58,7 +58,7 @@ export default {
   name: 'AdminIndex',
   data() {
       return {
-        url:require('../assets/logo.png')
+        url:require('@/assets/logo.png')
       }
     }
 }

@@ -143,7 +143,7 @@ export default {
   name: 'Myaccept',
   data() {
       return {
-        url:require('../assets/logo.png'),
+        url:require('@/assets/logo.png'),
         dialogFormVisible2:false,
         tableData1:'',
         tableData2:'',

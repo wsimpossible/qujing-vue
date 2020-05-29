@@ -9,6 +9,7 @@ import axiosInit from "./axios-init";
 
 window.axios = axiosInit();
 Vue.prototype.$http = window.axios;
+Vue.prototype.$axios = window.axios;
 Vue.config.productionTip = false
 Vue.use(ElementUI)
 /* eslint-disable no-new */

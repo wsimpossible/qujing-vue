@@ -84,7 +84,7 @@ export default {
   name: 'Taskdetail',
   data() {
       return {
-      url:require('../assets/logo.png'),
+      url:require('@/assets/logo.png'),
       detail:'',
       send:{id:''},
     }

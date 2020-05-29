@@ -127,7 +127,7 @@ export default {
   name: 'Tsakdeal',
   data() {
       return {
-      url:require('../assets/logo.png'),
+      url:require('@/assets/logo.png'),
       detail:'',
       dialogFormVisible:false,
       form: {

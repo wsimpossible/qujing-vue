@@ -54,7 +54,7 @@ export default {
   name: 'Charge',
   data() {
       return {
-        url:require('../assets/logo.png')
+        url:require('@/assets/logo.png')
       }
     },
     methods:{
