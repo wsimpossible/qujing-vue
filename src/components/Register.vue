@@ -101,7 +101,7 @@ export default {
             var self=this;
             this.examphone.phone=this.form.phone
             this.$http.post('/user/checkPhone',self.examphone).then(res=>{
-            if(res.data.code=="200")
+            if(res.status=="200")
             self.$message({
       showClose: true,
       message: '手机号已被注册'
@@ -124,11 +124,11 @@ export default {
   var self=this;
   this.$http.get('/authenticated/verifyCaptcha',sendJson)
   .then(res=>{
-  if(res.data.code =='200'){
+  if(res.status =='200'){
   	 this.$http.post('/authenticated/register',sendJson)
   .then(response=>{
   self.session= response.data;
-  if (self.session.code=="200") {
+  if (self.status=="200") {
   this.$message({
       showClose: true,
       message: '注册请求成功'
@@ -145,7 +145,7 @@ export default {
   catch(error=>{});
   this.$http.put('/authenticated/active',sendJson)
   .then(response=>{
-  if (response.data.code=='200') {
+  if (response.status=='200') {
   this.$message({
       showClose: true,
       message: '用户激活成功'

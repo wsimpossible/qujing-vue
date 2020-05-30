@@ -17,7 +17,32 @@
     </el-aside>
     
       <el-main>
-       提现表单
+       <el-form :model="form"  label-width="100px" width="400px">
+  <el-form-item
+    label="输入提现金额"
+    
+    :rules="[
+      { required: true, message: '提现金额不能为空'},
+      { type: 'number', message: '提现金额必须为数字值'}
+    ]"
+  >
+    <el-input  v-model="form.amount" autocomplete="off" width="300px"></el-input>
+  </el-form-item>
+  <el-form-item
+    label="输入支付宝账户（手机号）"
+    
+    :rules="[
+      { required: true, message: '账户不能为空'},
+      { type: 'number', message: '手机号必须为数字值'}
+    ]"
+  >
+    <el-input  v-model="form.amount" autocomplete="off" width="300px"></el-input>
+  </el-form-item>
+  <el-form-item>
+    <el-button type="primary" @click="submitForm">提交</el-button>
+    <el-button @click="resetForm">重置</el-button>
+  </el-form-item>
+</el-form>
       </el-main>
     </el-container>
   </el-container>
@@ -51,12 +76,29 @@ export default {
   name: 'UserIndex',
   data() {
       return {
-        url:require('@/assets/logo.png')
+        url:require('@/assets/logo.png'),
+        form:{
+          amount:'',
+          aliAccount:'',
+        
+        }
       }
     },
     methods:{
     menu(){
-    this.$router.push('userindex');
+    this.$router.push('/userindex');
+    },
+    submitForm(){
+      var sendJson=this.form
+      axios.put('/pay/withdraw',sendJson)
+           .then(response => {
+            });
+
+
+    },
+    resetForm(){
+      this.form.totalAmount='';
+
     }
     }
     

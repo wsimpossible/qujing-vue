@@ -63,10 +63,10 @@ export default {
       var self=this;
       this.$http.post('/authenticated/loginByStudentId',sendJson)
       .then(response=>{
-      console.log(response.data.code);
-      if (response.data.code=='200') {
-       
-    	self.$router.push('userindex');
+      console.log(response.status);
+      if (response.status=='200') {
+       self.$router.push('userindex');
+    	
 		} else { 
     		self.$message({
           showClose: true,

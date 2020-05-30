@@ -17,11 +17,13 @@
       <br /><br />
       <el-button  type="primary" @click="select2()"> 文件代送 </el-button>
       <br /><br />
-      <el-button  type="primary" @click="select3()"> 食堂代买</el-button>
+      <el-button  type="primary" @click="select3()"> 文件代取 </el-button>
       <br /><br />
-      <el-button  type="primary" @click="select4()"> 物品代购</el-button>
+      <el-button  type="primary" @click="select4()"> 食堂代买</el-button>
       <br /><br />
-      <el-button  type="primary" @click="select5()"> 其他</el-button>
+      <el-button  type="primary" @click="select5()"> 物品代购</el-button>
+      <br /><br />
+      <el-button  type="primary" @click="select6()"> 其他</el-button>
       <br /><br />
       <el-button  @click="menu()"> 返回</el-button>
     </el-aside>
@@ -35,6 +37,13 @@
       width="100">
       <template slot-scope="scope">
         <span style="margin-left: 10px">{{ scope.row.id }}</span>
+      </template>
+    </el-table-column>
+    <el-table-column
+      label="类型"
+      width="100">
+      <template slot-scope="scope">
+        <span style="margin-left: 10px">{{ scope.row.ttid }}</span>
       </template>
     </el-table-column>
     <el-table-column
@@ -126,92 +135,82 @@ export default {
     },
     //初始化任务列表
     created: function () {
-    var sendJson = JSON.stringify(this.pos);
+    var send =this.pos.start;
       var self=this;
-      console.log(sendJson);
-      var token = localStorage.getItem('token');
-      axios.defaults.headers.common['Authorization'] = token;
-      axios.defaults.headers.common['Content-Type'] = 'application/json';
-        axios.post('http://49.234.86.39:8081/qujin/client/list/task',sendJson)
-           .then(response => {
+      console.log(send);
+      console.log('/task/listUnacceptedTask/'+send);
+      this.$http.get('/task/listUnacceptedTask/'+send)
+      .then(response => {
            console.log(response.data);
-              self.tableData = JSON.parse(JSON.stringify(response.data.tasks));
+              self.tableData = JSON.parse(JSON.stringify(response.data));
             })
+          
         
     },
     methods:{
+      select(id){
+        this.$http.put('/list/taskBytype'+id)
+           .then(response => {
+              self.tableData = JSON.parse(JSON.stringify(response.data.tasks));
+            });
+    	},
     //筛选
     	select1(){
     	self.form.type=1;
     	var sendJson = this.form;
-      var self=this;
+      this.select(sendJson);
+      },
       
-        axios.post('http://49.234.86.39:8081/qujin/client/list/taskBytype',sendJson)
-           .then(response => {
-              self.tableData = JSON.parse(JSON.stringify(response.data.tasks));
-            });
-    	},
     	select2(){
-    	
-      self.form.type=2;
-      var sendJson = this.form;
-      var self=this;
-        axios.post('http://49.234.86.39:8081/qujin/client/list/taskBytype',sendJson)
-           .then(response => {
-              self.tableData = JSON.parse(JSON.stringify(response.data.tasks));
-            });
-    	},
+    	self.form.type=2;
+    	var sendJson = this.form;
+      this.select(sendJson);
+      },
+      
     	select3(){
-    	
       self.form.type=3;
-      var sendJson = this.form;
-      var self=this;
-        axios.post('http://49.234.86.39:8081/qujin/client/list/taskBytype',sendJson)
-           .then(response => {
-              self.tableData = JSON.parse(JSON.stringify(response.data.tasks));
-            });
-    	},
+    	var sendJson = this.form;
+      this.select(sendJson);
+      },
+      
     	select4(){
-    	
-      self.form.type=4;
-      var sendJson = this.form;
-      var self=this;
-        axios.post('http://49.234.86.39:8081/qujin/client/list/taskBytype',sendJson)
-           .then(response => {
-              self.tableData = JSON.parse(JSON.stringify(response.data.tasks));
-            });
+    	self.form.type=4;
+    	var sendJson = this.form;
+      this.select(sendJson);
     	},
     	select5(){
-    	
-      self.form.type=5;
-      var sendJson = this.form;
-      var self=this;
-        axios.post('http://49.234.86.39:8081/qujin/client/list/taskBytype',sendJson)
-           .then(response => {
-              self.tableData = JSON.parse(JSON.stringify(response.data.tasks));
-            });
+    	self.form.type=5;
+    	var sendJson = this.form;
+      this.select(sendJson);
     	},
     	//接受某任务
     	handleAccept(index,row){
-      this.tid.id=row.id;
-    	var sendJson = this.tid;
+  
+    	var sendJson = row.id;
     	console.log(sendJson)
       var self=this;
-    	axios.post('http://49.234.86.39:8081/qujin/client/list/acceptTask',sendJson)
+    	this.$http.put('/task/acceptTask/'+sendJson)
            .then(response => {
-           self.result=JSON.parse(JSON.stringify(response.data));
+           if(response.status=="200")
     	this.$message({
           showClose: true,
           message: '任务接受成功'
             
         });
-
+      
+          else{
+            this.$message({
+          showClose: true,
+          message: '任务接受失败'
+            
+        });
+          }
             });
     	
     	
     	},
     	menu(){
-    this.$router.push('userindex');
+    this.$router.push('/userindex');
     }
     }
     

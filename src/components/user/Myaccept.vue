@@ -18,30 +18,58 @@
     </el-aside>
     
       <el-main style="height: 500px; width: 1000px; margin: auto">
-       <div style="height: 200px; width: 800px; margin: auto">
+       <div style="height: 200px; width: 950px; margin: auto">
         <el-table
     :data="tableData1"
     style="width: 100%">
     <el-table-column
-      label="序号"
+      label="单号"
       width="100">
       <template slot-scope="scope">
         <span style="margin-left: 10px">{{ scope.row.id }}</span>
       </template>
     </el-table-column>
     <el-table-column
-      label="任务名"
-      width="200">
+      label="任务名称"
+      width="150">
       <template slot-scope="scope">
-        <span style="margin-left: 10px">{{ scope.row.name }}</span>
+        <span style="margin-left: 10px">{{ scope.row.name}}</span>
+      </template>
+    </el-table-column>
+    <el-table-column
+      label="任务类型"
+      width="100">
+      <template slot-scope="scope">
+        <span style="margin-left: 10px">{{ scope.row.ttid}}</span>
+      </template>
+    </el-table-column>
+    <el-table-column
+      label="加急"
+      width="100">
+      <template slot-scope="scope">
+        <span style="margin-left: 10px">{{ scope.row.expedited }}</span>
+      </template>
+    </el-table-column>
+    <el-table-column
+      label="积分"
+      width="100">
+      <template slot-scope="scope">
+        <span style="margin-left: 10px">{{ scope.row.points }}</span>
       </template>
     </el-table-column>
     
     <el-table-column
       label="截止时间"
-      width="150">
+      width="200">
       <template slot-scope="scope">
         <span style="margin-left: 10px">{{ scope.row.deadline }}</span>
+      </template>
+    </el-table-column>
+    <el-table-column
+      label="发布人"
+      width="100">
+      <template slot-scope="scope">
+        <span style="margin-left: 10px">{{ scope.row.senderid }}</span>
       </template>
     </el-table-column>
     
@@ -76,7 +104,7 @@
       label="发布者是否确认收到"
       width="200">
       <template slot-scope="scope">
-        <span style="margin-left: 10px">{{ scope.row.senderAccomplish }}</span>
+        <span style="margin-left: 10px">{{ scope.row.state }}</span>
       </template>
     </el-table-column>
     <el-table-column label="操作">
@@ -148,31 +176,31 @@ export default {
         tableData1:'',
         tableData2:'',
         upform2:{
-        suitType:'1',
+        suitType:'',
         content:'',
         id:'',
         },
-        start:{pos:'0'},
+        pos:'0',
         result:'',
       }
     },
     //初始化任务列表
     created: function () {
      
-    var sendJson = this.start;
+    var sendJson = this.pos;
     console.log(sendJson);
       var self=this;
-        axios.post('http://localhost:8081/qujin/client/user/findAcceptTask',sendJson)
+        axios.get('/task/listAccept/'+sendJson)
            .then(response => {
              console.log(response.data)
-              self.tableData1 = JSON.parse(JSON.stringify(response.data.accepUnfinishtTask.acceptTask));
-              self.tableData2 = JSON.parse(JSON.stringify(response.data.acceptFinishTask.acceptTask));
+              self.tableData1 = JSON.parse(JSON.stringify(response.data));
+              self.tableData2 = JSON.parse(JSON.stringify(response.data));
             });
         
     },
     methods:{
     menu(){
-    this.$router.push('userindex');
+    this.$router.push('/userindex');
     },
     setTag1(row){
     this.upfoem2.id=row.id

@@ -18,35 +18,55 @@
       <el-button  @click="menu()"> 返回</el-button>
     </el-aside>
     
-      <el-main style="height: 500px; width: 1000px; margin: auto">
-       <div style="height: 200px; width: 800px; margin: auto">
+      <el-main style="height: 500px; width: 1000px; margin:0">
+       <div style="height: 200px; width: 950px; margin:auto">
         <el-table
     :data="tableData1"
     style="width: 100%">
     <el-table-column
-      label="序号"
+      label="单号"
       width="100">
       <template slot-scope="scope">
         <span style="margin-left: 10px">{{ scope.row.id }}</span>
       </template>
     </el-table-column>
     <el-table-column
-      label="任务名"
-      width="200">
+      label="任务名称"
+      width="150">
       <template slot-scope="scope">
-        <span style="margin-left: 10px">{{ scope.row.name }}</span>
+        <span style="margin-left: 10px">{{ scope.row.name}}</span>
       </template>
     </el-table-column>
-    
     <el-table-column
-      label="剩余时间(分钟)"
-      width="150">
+      label="加急"
+      width="100">
+      <template slot-scope="scope">
+        <span style="margin-left: 10px">{{ scope.row.expedited }}</span>
+      </template>
+    </el-table-column>
+    <el-table-column
+      label="积分"
+      width="100">
+      <template slot-scope="scope">
+        <span style="margin-left: 10px">{{ scope.row.points }}</span>
+      </template>
+    </el-table-column>
+    <el-table-column
+      label="是否已接单"
+      width="100">
+      <template slot-scope="scope">
+        <span style="margin-left: 10px">{{ scope.row.state }}</span>
+      </template>
+    </el-table-column>
+    <el-table-column
+      label="截止时间"
+      width="200">
       <template slot-scope="scope">
         <span style="margin-left: 10px">{{ scope.row.deadline }}</span>
       </template>
     </el-table-column>
     <el-table-column
-      label="是否已接单"
+      label="接单人"
       width="100">
       <template slot-scope="scope">
         <span style="margin-left: 10px">{{ scope.row.receiverid }}</span>
@@ -96,13 +116,19 @@
       </template>
     </el-table-column>
     <el-table-column
-      label="任务名"
-      width="200">
+      label="任务名称"
+      width="150">
       <template slot-scope="scope">
         <span style="margin-left: 10px">{{ scope.row.name }}</span>
       </template>
     </el-table-column>
-    
+    <el-table-column
+      label="接单人"
+      width="100">
+      <template slot-scope="scope">
+        <span style="margin-left: 10px">{{ scope.row.receiverid }}</span>
+      </template>
+    </el-table-column>
     <el-table-column label="操作">
       <template slot-scope="scope">
       <el-button type="primary" @click="setTag2(scope.row)">已收到</el-button>
@@ -177,77 +203,64 @@ export default {
       dialogFormVisible2:false,
         url:require('@/assets/logo.png'),
         visible: false,
-         tableData1:[{
-          rank: '',
-          name: '',
-          time:'',
-          acp:'',
-        }],
-        tableData2:[{
-          rank: '',
-          name: '',
-          time:'',
-          acp:'',
-        }],
+         tableData1:'',
+        tableData2:'',
         upform1:{
           id:'',
           type:'',
           content:'',
         },
         upform2:{
-        type:{id:'1'},
+        type:{id:''},
         task:{id:''},
         content:'',
         },
-        pos:{"pos":"0"},
+        pos:'0',
         result:'',
-        tid:{id:''},
+        tid:'',
       }
     },
     //初始化任务列表
     created: function () {
+      var sendJson =this.pos;
     console.log(sendJson);
-       var token = localStorage.getItem('token');
-    axios.defaults.headers.common['Authorization'] = token;
-    axios.defaults.headers.common['Content-Type'] = 'application/json';
-    var sendJson =this.pos;
       var self=this;
-        axios.post('http://49.234.86.39:8081/qujin/client/user/findSenderTask',sendJson)
+        axios.get('/task/listPublish/'+sendJson)
            .then(response => {
              if(response.data != null) {
                console.log(response.data)
-             if(response.data.senderUnfinishTask.publishTask != null)
-              self.tableData1 = JSON.parse(JSON.stringify(response.data.senderUnfinishTask.publishTask));
-            if(response.data.senderFinishTask.publishTask !=null)
-              self.tableData2 = JSON.parse(JSON.stringify(response.data.senderFinishTask.publishTask));
+             if(response.data!= null)
+              self.tableData1 = JSON.parse(JSON.stringify(response.data));
+            if(response.data!=null)
+              self.tableData2 = JSON.parse(JSON.stringify(response.data));
            }
             });
         
     },
     methods:{
     menu(){
-    this.$router.push('userindex');
+    this.$router.push('/userindex');
     },
     release(){
     this.$router.push('/userindex/release');
     },
     setTag1(row){
-    dialogFormVisible1 = true;
+    this.dialogFormVisible1 = true;
     this.upform1.id=row.id;
     },
     setTag2(row){
-    dialogVisible = true
-    this.tid.id=row.id;
+    this.dialogVisible = true
+    this.tid=row.id;
     },
     
     //确认完成任务
     handleCom(){
     var sendJson = this.tid;
       var self=this;
-        axios.post('http://49.234.86.39:8081/qujin/client/task/sender/accomplish',sendJson)
+        axios.put('/task/sender/confirm/'+sendJson)
            .then(response => {
-              self.result=JSON.parse(JSON.stringify(response.data));
-              if(self.result=="success")
+              
+              if(response.status=="200")
               {
               this.$notify({
           title: '成功',
@@ -258,7 +271,7 @@ export default {
               this.$notify({
           title: '失败',
           message: '确认任务失败',
-          type: 'success'
+       
         });
               }
             });
@@ -268,10 +281,10 @@ export default {
     handleCancel(){
         var sendJson =this.upform1;
       var self=this;
-        axios.post('http://49.234.86.39:8081/qujin/client/task/sender/cancle',sendJson)
+        axios.delete('/task/sender/cancel/'+sendJson.id,sendJson)
            .then(response => {
-              self.result=JSON.parse(JSON.stringify(response.data));
-              if(self.result=="success")
+              
+              if(response.status=="200")
               {
               this.$notify({
           title: '成功',
@@ -282,7 +295,7 @@ export default {
               this.$notify({
           title: '失败',
           message: '取消请求失败',
-          type: 'success'
+      
         });
               }
             });
@@ -297,7 +310,7 @@ export default {
     handleBack(){
     var sendJson = this.upform2;
       var self=this;
-        axios.post('http://49.234.86.39:8081/qujin/client/feedback/add',sendJson,{headers:{'Content-Type':'application/json'}})
+        axios.post('/feedback/suitTask',sendJson)
            .then(response => {
               self.result=JSON.parse(JSON.stringify(response.data));
               if(self.result=="success")

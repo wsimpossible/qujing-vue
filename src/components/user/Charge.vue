@@ -19,7 +19,17 @@
     
       <el-main>
        <div style="margin: auto">
-         支付宝，微信二维码
+         <el-form ref="form" :model="form"  label-width="120px">
+         <el-form-item label="充值金额">
+    <el-col :span="5">
+      <el-input v-model="form.totalAmount" placeholder="请输入充值金额（1元=100积分）"></el-input>
+    </el-col>
+    </el-form-item>
+    <el-form-item>
+    <el-button type="primary" @click="submitForm">提交</el-button>
+    <el-button @click="resetForm">重置</el-button>
+  </el-form-item>
+         </el-form>
        </div>
       </el-main>
     </el-container>
@@ -54,13 +64,28 @@ export default {
   name: 'Charge',
   data() {
       return {
-        url:require('@/assets/logo.png')
+        url:require('@/assets/logo.png'),
+        form:{totalAccount:''}
       }
     },
     methods:{
     menu(){
-    this.$router.push('userindex');
+    this.$router.push('/userindex');
+    },
+    submitForm(){
+      var sendJson=this.form
+      axios.post('/pay/recharge',sendJson)
+           .then(response => {
+             console.log(response.data);
+            });
+
+
+    },
+    resetForm(){
+      this.form.totalAmount='';
+
     }
+
     }
     
     

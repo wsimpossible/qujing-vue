@@ -2,17 +2,16 @@ import axios from 'axios'
  
 export default()=>{
 
-   axios.defaults.baseURL = 'http://localhost:8081/qujin/client'; // 配置axios请求的地址
+   axios.defaults.baseURL = 'http://localhost:8081/qujing/client'; // 配置axios请求的地址
    axios.defaults.headers.post['Content-Type'] = 'application/json; charset=utf-8';
    axios.defaults.crossDomain = true;  //设置cross跨域 并设置访问权限 
   
  
    //配置发送请求前的拦截器 可以设置token信息 
    axios.interceptors.request.use(config => {
-       var token = localStorage.getItem('token');
+	   var token = localStorage.getItem('token');
 	   if(token==null ||token!=axios.defaults.headers.common['Authorization'])
        axios.defaults.headers.common['Authorization'] = token;
-       console.log(token);
            return config;
        }, error => {
            loadingInstance.close();
@@ -20,18 +19,15 @@ export default()=>{
        });
 // 配置响应拦截器 
    axios.interceptors.response.use(res => {
-       //对响应数据做些事
-       console.log(res.status);
-       
-       if(res.status=="401"){
-       	
-        //全局登陆过滤，当判读token失效或者没有登录时 返回登陆页面
-        this.$router.push('/');
-        return false;
-    };
+   	//对响应数据做些事
        const authorization = res.headers.authorization;
        localStorage.setItem('token',authorization);
-       console.log(authorization);
+       if(res.status =='401'){
+       	
+           //全局登陆过滤，当判读token失效或者没有登录时 返回登陆页面
+       	this.$router.push('/');
+           return false;
+       };
        return res;
    	},
    	error => {

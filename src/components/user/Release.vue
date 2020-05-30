@@ -20,31 +20,32 @@
        <div>
        <el-form ref="form" :model="form" rules="rules" label-width="120px">
   <el-form-item label="任务名称" >
-    <el-input v-model="form.taskName" placeholder="请输入简单描述（取货地址与目的地）"></el-input>
+    <el-input v-model="form.name" placeholder="请输入简单描述（取货地址与目的地）"></el-input>
   </el-form-item>
   <el-form-item label="任务描述">
-    <el-input type="textarea" v-model="form.taskDetail" placeholder="请输入任务描述（50汉字以内，标注姓名、取货码等必须信息）"></el-input>
+    <el-input type="textarea" v-model="form.content" placeholder="请输入任务描述（50汉字以内，标注姓名、取货码等必须信息）"></el-input>
   </el-form-item>
   <el-form-item label="支付积分">
     <el-col :span="5">
-      <el-input v-model="form.credit" placeholder="请输入支付积分"></el-input>
+      <el-input v-model="form.points" placeholder="请输入支付积分"></el-input>
     </el-col>
     </el-form-item>
   <el-form-item label="截止时间">
     <el-col :span="5">
-      <el-input v-model="form.ddl" placeholder="请输入截止时间（分钟）"></el-input>
+      <el-input v-model="form.ttl" placeholder="请输入截止时间（分钟）"></el-input>
     </el-col>
   </el-form-item>
   <el-form-item label="发布为加急">
     <el-switch v-model="form.quick" ></el-switch>
   </el-form-item>
   <el-form-item label="服务类型">
-    <el-select v-model="form.taskType" placeholder="请选择服务类型" >
+    <el-select v-model="form.ttid" placeholder="请选择服务类型" >
       <el-option label="快递代取" value="1"></el-option>
-      <el-option label="文件代领" value="2"></el-option>
-      <el-option label="食堂代买" value="3"></el-option>
-      <el-option label="物品代购" value="4"></el-option>
-      <el-option label="其他" value="5"></el-option>
+      <el-option label="文件代送" value="2"></el-option>
+      <el-option label="文件代取" value="3"></el-option>
+      <el-option label="食堂代买" value="4"></el-option>
+      <el-option label="物品代购" value="5"></el-option>
+      <el-option label="其他" value="6"></el-option>
     </el-select>
   </el-form-item>
  
@@ -90,28 +91,33 @@ export default {
       return {
         url:require('@/assets/logo.png'),
         form: {
-          taskName: '',
-          taskDetail: '',
-          credit:'',
-          ddl:'',
-          quick:'',
-          taskType:'',
+          name: '',
+          content: '',
+          points:'',
+          ttl:'',
+          quick:'false',
+          expedited:'',
+          ttid :'',
         },
         result:'',
         rules: {
-          taskName: [
+          name: [
             { required: true, message: '请输入任务名称', trigger: 'blur' },
             { min: 1, max: 30, message: '不能为空，长度小于30个字符', trigger: 'blur' }
           ],
-          taskDetail: [
+          content: [
             { required: true, message: '请输入任务描述', trigger: 'blur' },
             { min: 1, max: 100, message: '不能为空，长度小于100个字符', trigger: 'blur' }
           ],
-          ddl:[
+          points:[
+      { required: true, message: '不能为空'},
+      { type: 'number', message: '必须为数字'}
+    ],
+          ttl:[
       { required: true, message: '截止时间不能为空'},
       { type: 'number', message: '截止时间必须为数字值'}
     ],
-          taskType: [
+          ttid : [
             { required: true, message: '请选择任务类型', trigger: 'change' }
           ]
         }
@@ -119,29 +125,32 @@ export default {
     },
     methods:{
     menu(){
-    this.$router.push('userindex');
+    this.$router.push('/userindex');
     },
     //处理发布任务
     onSubmit() {
-    var token = localStorage.getItem('token');
-    axios.defaults.headers.common['Authorization'] = token;
+    if(this.form.quick=="true")
+    this.form.expedited='1';
+    else{
+      this.form.expedited='0';
+    }
     var sendJson =this.form;
       var self=this;
-      axios.post('http://49.234.86.39:8081/qujin/client/release/task',sendJson,{headers:{'Content-Type':'application/json'}})
+      console.log(sendJson);
+      this.$http.post('/task/post',sendJson)
         .then((response) => {
         self.result=response.data;
-        if (self.result=="success") {
+        if (response.status=="200") {
     	this.$notify({
           title: '成功',
           message: '任务发布成功',
           type: 'success'
         });
-        this.$router.push('userindex');
+        this.$router.push('/userindex');
 		} else  {
     	this.$notify({
           title: '失败',
-          message: '任务发布失败',
-          type: 'success'
+          message: '任务发布失败'
         });
 		}
         })

@@ -6,7 +6,7 @@
       style="width: 55px; height: 55px;margin:5px;float:left"
       :src="url"
       :fit="contain"></el-image>
-<div style="float:left">用户首页
+<div style="float:left">个人中心
 </div>
     </el-header>
 <el-container style="height: 500px; width: 1200px; margin: auto">

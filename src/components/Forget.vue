@@ -100,7 +100,7 @@ export default {
             var self=this;
             this.examphone.phone=this.form.phone
             this.$http.post('/user/checkPhone',self.examphone).then(res=>{
-            if(res.data.code=="200")
+            if(res.status=="200")
             self.$http.post('/authenticated/sendCaptcha',self.examphone).then(res=>{
     	self.$message({
       showClose: true,
@@ -125,10 +125,10 @@ export default {
   var self=this;
   this.$http.post('/authenticated/verifyCaptcha',sendJson)
   .then(res=>{
-  if (res.data.code=="200") {
+  if (res.status=="200") {
   this.$http.post('/authenticated/forgetPwd',sendJson)
   .then(res=>{
-  if (res.data.code=="200") {
+  if (res.status=="200") {
   this.$message({
       showClose: true,
       message: '密码修改成功'
