@@ -133,21 +133,24 @@ export default {
         
       }
     },
+    
     //初始化任务列表
     created: function () {
-    var send =this.pos.start;
-      var self=this;
-      console.log(send);
-      console.log('/task/listUnacceptedTask/'+send);
+      this.getData();
+      
+    },
+    methods:{
+      getData(){
+        var send =this.pos.start;
+        var self=this;
+        console.log('/task/listUnacceptedTask/'+send);
       this.$http.get('/task/listUnacceptedTask/'+send)
       .then(response => {
            console.log(response.data);
               self.tableData = JSON.parse(JSON.stringify(response.data));
             })
-          
-        
-    },
-    methods:{
+      },
+
       select(id){
         this.$http.put('/list/taskBytype'+id)
            .then(response => {
@@ -192,12 +195,12 @@ export default {
     	this.$http.put('/task/acceptTask/'+sendJson)
            .then(response => {
            if(response.status=="200")
-    	this.$message({
+             this.$message({
           showClose: true,
           message: '任务接受成功'
             
         });
-      
+  
           else{
             this.$message({
           showClose: true,

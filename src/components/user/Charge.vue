@@ -21,8 +21,8 @@
        <div style="margin: auto">
          <el-form ref="form" :model="form"  label-width="120px">
          <el-form-item label="充值金额">
-    <el-col :span="5">
-      <el-input v-model="form.totalAmount" placeholder="请输入充值金额（1元=100积分）"></el-input>
+    <el-col :span="8">
+      <el-input v-model="form.totalAmount" placeholder="请输入充值金额（1元=100积分）" ></el-input>
     </el-col>
     </el-form-item>
     <el-form-item>
@@ -30,6 +30,7 @@
     <el-button @click="resetForm">重置</el-button>
   </el-form-item>
          </el-form>
+         
        </div>
       </el-main>
     </el-container>
@@ -77,6 +78,8 @@ export default {
       axios.post('/pay/recharge',sendJson)
            .then(response => {
              console.log(response.data);
+              document.querySelector('body').innerHTML =response.data;
+              document.forms[0].submit();
             });
 
 

@@ -20,26 +20,26 @@
        <div>
        <el-form ref="form" :model="form" rules="rules" label-width="120px">
   <el-form-item label="任务名称" >
-    <el-input v-model="form.name" placeholder="请输入简单描述（取货地址与目的地）"></el-input>
+    <el-input v-model="form.name" autocomplete="off" placeholder="请输入简单描述（取货地址与目的地）"></el-input>
   </el-form-item>
   <el-form-item label="任务描述">
-    <el-input type="textarea" v-model="form.content" placeholder="请输入任务描述（50汉字以内，标注姓名、取货码等必须信息）"></el-input>
+    <el-input type="textarea" v-model="form.content" autocomplete="off" placeholder="请输入任务描述（50汉字以内，标注姓名、取货码等必须信息）"></el-input>
   </el-form-item>
   <el-form-item label="支付积分">
     <el-col :span="5">
-      <el-input v-model="form.points" placeholder="请输入支付积分"></el-input>
+      <el-input v-model="form.points" autocomplete="off" placeholder="请输入支付积分"></el-input>
     </el-col>
     </el-form-item>
   <el-form-item label="截止时间">
     <el-col :span="5">
-      <el-input v-model="form.ttl" placeholder="请输入截止时间（分钟）"></el-input>
+      <el-input v-model="form.ttl" autocomplete="off" placeholder="请输入截止时间（分钟）"></el-input>
     </el-col>
   </el-form-item>
   <el-form-item label="发布为加急">
     <el-switch v-model="form.quick" ></el-switch>
   </el-form-item>
   <el-form-item label="服务类型">
-    <el-select v-model="form.ttid" placeholder="请选择服务类型" >
+    <el-select v-model="form.ttid" autocomplete="off" placeholder="请选择服务类型" >
       <el-option label="快递代取" value="1"></el-option>
       <el-option label="文件代送" value="2"></el-option>
       <el-option label="文件代取" value="3"></el-option>

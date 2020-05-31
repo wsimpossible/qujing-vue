@@ -72,46 +72,17 @@
         <span style="margin-left: 10px">{{ scope.row.senderid }}</span>
       </template>
     </el-table-column>
-    
-    <el-table-column label="操作">
-      <template slot-scope="scope">
-        <el-button size="mini"  type="primary" @click="handleDeal(scope.$index, scope.row)">处理任务</el-button>
-   </template>     
-    </el-table-column>
-    
-  </el-table>
-       </div>
-       <el-divider></el-divider>
-       <div style="height: 200px; width: 800px; margin: auto">
-      <el-table
-    :data="tableData2"
-    style="width: 100%">
     <el-table-column
-      label="序号"
+      label="任务状态"
       width="100">
-      <template slot-scope="scope">
-        <span style="margin-left: 10px">{{ scope.row.id }}</span>
-      </template>
-    </el-table-column>
-    <el-table-column
-      label="任务名"
-      width="200">
-      <template slot-scope="scope">
-        <span style="margin-left: 10px">{{ scope.row.name }}</span>
-      </template>
-    </el-table-column>
-    <el-table-column
-      label="发布者是否确认收到"
-      width="200">
       <template slot-scope="scope">
         <span style="margin-left: 10px">{{ scope.row.state }}</span>
       </template>
     </el-table-column>
-    <el-table-column label="操作">
+    <el-table-column label="操作" width="150">
       <template slot-scope="scope">
-
-
-<el-button type="text" size="mini" @click="setTag1(scope.row)">举报</el-button>
+        <el-button size="mini"  type="primary" @click="handleDeal(scope.$index, scope.row)">处理任务</el-button>
+        <el-button type="text" size="mini" @click="setTag1(scope.row)">举报</el-button>
 
 <el-dialog title="举报任务" :visible.sync="dialogFormVisible2">
   <el-form :model="upform2">
@@ -135,7 +106,7 @@
    </template>     
     </el-table-column>
     
-  </el-table>
+        </el-table>
       </div>
       </el-main>
     </el-container>

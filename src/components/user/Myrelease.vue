@@ -72,7 +72,7 @@
         <span style="margin-left: 10px">{{ scope.row.receiverid }}</span>
       </template>
     </el-table-column>
-    <el-table-column label="操作">
+    <el-table-column label="操作" width="300">
       <template slot-scope="scope">
       <el-button type="text" @click="setTag1(scope.row)">取消任务</el-button>
 
@@ -97,41 +97,7 @@
     <el-button type="primary" @click="handleCancel()">确 定</el-button>
   </div>
 </el-dialog>
-        
-   </template>     
-    </el-table-column>
-    
-  </el-table>
-       </div>
-       <el-divider></el-divider>
-       <div style="height: 200px; width: 800px; margin: auto">
-      <el-table
-    :data="tableData2"
-    style="width: 100%">
-    <el-table-column
-      label="序号"
-      width="100">
-      <template slot-scope="scope">
-        <span style="margin-left: 10px">{{ scope.row.id }}</span>
-      </template>
-    </el-table-column>
-    <el-table-column
-      label="任务名称"
-      width="150">
-      <template slot-scope="scope">
-        <span style="margin-left: 10px">{{ scope.row.name }}</span>
-      </template>
-    </el-table-column>
-    <el-table-column
-      label="接单人"
-      width="100">
-      <template slot-scope="scope">
-        <span style="margin-left: 10px">{{ scope.row.receiverid }}</span>
-      </template>
-    </el-table-column>
-    <el-table-column label="操作">
-      <template slot-scope="scope">
-      <el-button type="primary" @click="setTag2(scope.row)">已收到</el-button>
+        <el-button type="primary" @click="setTag2(scope.row)">已收到</el-button>
 
 <el-dialog
   title="提示"
@@ -163,7 +129,7 @@
     </el-table-column>
     
   </el-table>
-      </div>
+       </div>
       </el-main>
     </el-container>
   </el-container>
@@ -304,7 +270,7 @@ export default {
     },
     setTag3(row){
     this.upform2.task.id=row.id;
-    dialogFormVisible2 = true;
+    this.dialogFormVisible2 = true;
     },
     //任务反馈
     handleBack(){
