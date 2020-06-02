@@ -73,8 +73,8 @@
         <el-button type="text" size="mini" @click="setTag1(scope.row)">举报</el-button>
 
 <el-dialog title="举报任务" :visible.sync="dialogFormVisible2">
-  <el-form :model="upform2">
-<el-form-item label="违规类型">
+  <el-form :model="upform2" ref="upform2" :rules="rules">
+<el-form-item label="违规类型" prop="type">
     <el-select v-model="upform2.type" placeholder="请选择违规类型" >
       <el-option label="敏感词汇" value="1"></el-option>
       <el-option label="政治敏感" value="2"></el-option>
@@ -82,13 +82,13 @@
       <el-option label="违规发布" value="4"></el-option>
     </el-select>
   </el-form-item>
-    <el-form-item label="描述" :label-width="formLabelWidth">
+    <el-form-item label="描述" :label-width="formLabelWidth" prop="content">
       <el-input type="textarea" v-model="upform2.content" autocomplete="off"></el-input>
     </el-form-item>
   </el-form>
   <div slot="footer" class="dialog-footer">
     <el-button @click="dialogFormVisible2 = false">取 消</el-button>
-    <el-button type="primary" @click="handleReport()">确 定</el-button>
+    <el-button type="primary" @click="handleReport('upform2')">确 定</el-button>
   </div>
 </el-dialog> 
    </template>     
@@ -142,6 +142,14 @@ export default {
         },
         pos:'0',
         result:'',
+        rules: {
+          type: [
+            { required: true, message: '请选择违规项', trigger: 'change' }
+          ],
+          content: [
+            { required: true, message: '请输入违规描述', trigger: 'blur' }
+          ]
+        }
       }
     },
     //初始化任务列表
@@ -166,12 +174,14 @@ export default {
     this.upform2.task=row.id
     this.dialogFormVisible2 = true;
     },
-    handleReport()
+    handleReport(upform2)
     {
     var sendJson =this.upform2;
       var self=this;
       console.log(sendJson);
-        axios.post('/suit/suitTask',sendJson)
+      this.$refs[upform2].validate((valid) => {
+          if (valid) {
+            axios.post('/suit/suitTask',sendJson)
            .then(response => {
            self.result= JSON.parse(JSON.stringify(response.data));
               if (response.status=="200") {
@@ -189,8 +199,14 @@ export default {
         });
 		}
             });
-    this.dialogFormVisible2 = false;
+
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
     
+    this.dialogFormVisible2 = false;
     
     },
     handleDeal(index,row){

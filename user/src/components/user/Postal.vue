@@ -26,7 +26,7 @@
       { type: 'number', message: '提现金额必须为数字值'}
     ]"
   >
-    <el-input  v-model="form.amount" autocomplete="off" width="300px"></el-input>
+    <el-input  v-model.number="form.amount" autocomplete="off" width="300px"></el-input>
   </el-form-item>
   <el-form-item
     label="输入支付宝账户（手机号）"
@@ -36,7 +36,7 @@
       { type: 'number', message: '手机号必须为数字值'}
     ]"
   >
-    <el-input  v-model="form.amount" autocomplete="off" width="300px"></el-input>
+    <el-input  v-model.number="form.amount" autocomplete="off" width="300px"></el-input>
   </el-form-item>
   <el-form-item>
     <el-button type="primary" @click="submitForm">提交</el-button>

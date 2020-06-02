@@ -15,21 +15,7 @@ Vue.config.productionTip = false
 Vue.use(ElementUI)
 /* eslint-disable no-new */
 
-router.beforeEach((to, from, next) => {
-  let islogin = localStorage.getItem("islogin");
-  if(to.path == "/"){
-    
-      next();
-    
-  }else{
-    // requireAuth:可以在路由元信息指定哪些页面需要登录权限
-    if(to.meta.requireAuth && islogin) {
-      next();
-    }else{
-      next("/");
-    }
-  }
-})
+
 
 new Vue({
   el: '#app',

@@ -86,9 +86,9 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       :current-page.sync="currentPage1"
-      :page-size="8"
+      :page-size="6"
       layout="total, prev, pager, next"
-      :total="1">
+      :total="total">
     </el-pagination>
   </div>
     </el-main>
@@ -121,18 +121,33 @@ export default {
   data() {
       return {
       currentPage: 1,
+      total:10,
+      alldata:'',
       url:require('@/assets/logo.png'),
         tableData:''
       }
     },
     //初始化表格
     created: function () {
-        axios.get('url')
+        axios.get('/admin/reportmanage/list.do')
            .then(response => {
-              this.tableData = response.data
+              this.alldata = response.data;
+              this.pagedivde(1);
             })
         
     },
+    //将数据分页
+      pagedivde(cpage){
+        this.total=parseInt(this.alldata.length);
+        var jr=[];
+        var start=(cpage-1)*6;
+        var j=0;
+        for(var i=start;(i<this.total&&j<6);i++){
+          jr.push(this.alldata[i]);
+          j++;
+        }
+        this.tableData=jr;
+      },
     methods: {
       handleDetail(index, row) {
       this.$router.push({  
@@ -144,11 +159,9 @@ export default {
         });
 
       },
-      handleSizeChange(val) {
-        console.log(`每页 ${val} 条`);
-      },
+      
       handleCurrentChange(val) {
-        console.log(`当前页: ${val}`);
+        this.pagedivde(val);
       }
     }
 }

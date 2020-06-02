@@ -61,7 +61,7 @@ export default {
       var self=this;
       this.$refs[form].validate((valid) => {
           if (valid) {
-            axios.get('url',sendJson)
+            axios.get('/adminlogin/login.do',{params: {username:sendJson.username,password:sendJson.password}})
       .then(response=>{
       console.log(response.status);
       if (response.status=='200') {

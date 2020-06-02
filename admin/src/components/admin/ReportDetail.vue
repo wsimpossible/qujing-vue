@@ -135,7 +135,7 @@ export default {
     created: function () {
     this.ID=this.$route.query.id;
     var self=this;
-        axios.get('url',{params: {id:self.ID}})
+        axios.get('/admin/reportmanage/showreport.do',{params: {id:self.ID}})
            .then(response => {
               this.detail=response.data;
             })
@@ -145,7 +145,7 @@ export default {
    //删除被举报的任务
       handleDelete() {
       var self=this;
-      axios.get('url',{params: {id:self.detail.suitID}})
+      axios.get('/admin/reportmanage/deletetask.do',{params: {id:self.detail.suitID}})
            .then(response => {
               
             });
@@ -163,7 +163,7 @@ export default {
       //该任务未违规
       handleUndelete() {
       var self=this;
-      axios.get('url',{params: {id:self.detail.suitID}})
+      axios.get('/admin/reportmanage/legaltask.do',{params: {id:self.detail.suitID}})
            .then(response => {
               
             });

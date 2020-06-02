@@ -22,7 +22,7 @@
          <el-form ref="form" :model="form"  label-width="120px">
          <el-form-item label="充值金额">
     <el-col :span="8">
-      <el-input v-model="form.totalAmount" placeholder="请输入充值金额（1元=100积分）" ></el-input>
+      <el-input v-model.number="form.totalAmount" placeholder="请输入充值金额（1元=100积分）" ></el-input>
     </el-col>
     </el-form-item>
     <el-form-item>

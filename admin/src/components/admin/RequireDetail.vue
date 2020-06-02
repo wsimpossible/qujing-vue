@@ -34,6 +34,9 @@
     	<div style="height:45px">
     	<h5>任务名：</h5>
         </div>
+        <div style="height:45px">
+    	<h5>任务积分：</h5>
+        </div>
         <div style="height:100px">
     	<h5>任务描述：</h5>
         </div>
@@ -54,6 +57,9 @@
     	<div style="height:45px">
     	<b><p>{{detail.taskName}}</p></b>
         </div>
+        <div style="height:45px">
+    	<b><p>{{detail.points}}</p></b>
+        </div>
         <div style="height:100px">
     	<b><p>{{detail.taskContent}}</p></b>
         </div>
@@ -72,14 +78,14 @@
     </div>
     <div style="height:380px; width:200px;float:left">
     <el-col>
-	<el-button type="primary" style="width:120px" @click="dialogFormVisible = true">同意取消</el-button>
+	<el-button type="primary" style="width:120px" @click="handleChange">同意取消</el-button>
 <el-dialog title="双方积分调整" :visible.sync="dialogFormVisible">
   <el-form :model="form">
     <el-form-item label="收货方积分调整" :label-width="formLabelWidth">
-      <el-input v-model.number="form.score1" type="number" autocomplete="off" placeholder="（正数增加，负数减少）"></el-input>
+      <el-input v-model.number="form.score1" type="number" autocomplete="off" placeholder="请输入调整后积分"></el-input>
     </el-form-item>
     <el-form-item label="送货方积分调整：" :label-width="formLabelWidth">
-      <el-input v-model.number="form.score2" type="number" autocomplete="off" placeholder="（正数增加，负数减少）"></el-input>
+      <el-input v-model.number="form.score2" type="number" autocomplete="off" placeholder="请输入调整后积分"></el-input>
     </el-form-item>
   </el-form>
   <div slot="footer" class="dialog-footer">
@@ -154,7 +160,7 @@ export default {
     this.ID=this.$route.query.id;
 
     var self=this;
-        axios.get('url',{params: {id:self.ID}})
+        axios.get('/admin/canclemanage/showDetail.do',{params: {id:self.ID}})
            .then(response => {
               this.detail=response.data;
             });
@@ -162,11 +168,17 @@ export default {
         
     },
   	methods: {
+      handleChange(){
+        this.form.score1=this.detail.receiverPoints;
+        this.form.score2=this.detail.senderPoints;
+        this.dialogFormVisible = true;
+
+      },
   	//处理同意取消
       handleCancel(index, row) {
       	this.dialogFormVisible = false;
       	var self=this;
-      axios.get('url',{params: {id:self.detail.cancleID,senderpoints:self.form.score2,receiverpoints:self.form.score1,type:self.detail.type}})
+      axios.get('/admin/canclemanage/cancle.do',{params: {id:self.detail.cancleID,senderpoints:self.form.score2,receiverpoints:self.form.score1,type:self.detail.type}})
            .then(response => {
               
             });
@@ -183,7 +195,7 @@ export default {
       //处理退回请求
       handleKnock() {
       var self=this;
-      axios.get('url',{params: {id:self.detail.cancleID,type:self.detail.type}})
+      axios.get('/admin/canclemanage/refusecancle.do',{params: {id:self.detail.cancleID,type:self.detail.type}})
            .then(response => {
               
             });

@@ -65,7 +65,7 @@
         <el-dialog title="积分调整" :visible.sync="dialogFormVisible">
   <el-form :model="upform"  ref="form">
     <el-form-item label="用户积分调整" :label-width="formLabelWidth">
-      <el-input v-model.number="upform.score" autocomplete="off" type="number" placeholder="（正数增加，负数减少）"></el-input>
+      <el-input v-model.number="upform.score" autocomplete="off" type="number" placeholder="输入调整后积分"></el-input>
     </el-form-item>
   </el-form>
   <div slot="footer" class="dialog-footer">
@@ -109,9 +109,9 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       :current-page.sync="currentPage1"
-      :page-size="8"
+      :page-size="6"
       layout="total, prev, pager, next"
-      :total="1">
+      :total="total">
     </el-pagination>
   </div>
     </el-main>   
@@ -151,7 +151,9 @@ export default {
       visible3: false,
       visible4: false,
       visible5: false,
+      total:10,
       currentPage: 1,
+      alldata:'',
       url:require('@/assets/logo.png'),
         tableData:'',
         dialogFormVisible: false,
@@ -164,22 +166,36 @@ export default {
     },
     //初始化表格
     created: function () {
-       	axios.get('url')
+       	axios.get('/admin/usermanage/list.do')
            .then(response => {
-              this.tableData = response.data
+              this.alldata = response.data;
+              this.pagedivde(1);
             })
     },
     methods: {
+      //将数据分页
+      pagedivde(cpage){
+        this.total=parseInt(this.alldata.length);
+        var jr=[];
+        var start=(cpage-1)*6;
+        var j=0;
+        for(var i=start;(i<this.total&&j<6);i++){
+          jr.push(this.alldata[i]);
+          j++;
+        }
+        this.tableData=jr;
+      },
     //修改用户积分
     handleChange(row)
     {
     	this.upform.id=row.userIDNumber;
+      this.upform.score=row.points;
     	this.dialogFormVisible = true;
     },
       handleEdit(index, row) {
       var self=this;
  
-      	axios.get('url',{params: {IDNumber:self.upform.id,points:self.upform.score}})
+      	axios.get('/admin/usermanage/changepoints.do',{params: {IDNumber:self.upform.id,points:self.upform.score}})
            .then(response => {
    
             });
@@ -192,7 +208,7 @@ export default {
       //重置用户密码
       handleReset(index, row) {
 
-      	axios.get('url',{params: {id:row.userIDNumber}})
+      	axios.get('/admin/usermanage/resetpassword.do',{params: {id:row.userIDNumber}})
            .then(response => {
  
             });
@@ -205,7 +221,7 @@ export default {
       //注销用户
       handleDelete(index, row) {
 
-      axios.get('url',{params: {id:row.userIDNumber}})
+      axios.get('/admin/usermanage/deleteaccount.do',{params: {id:row.userIDNumber}})
            .then(response => {
   
             });
@@ -218,7 +234,7 @@ export default {
       //激活用户
       handleActive(index, row) {
 
-      axios.get('url',{params: {id:row.userIDNumber}})
+      axios.get('/admin/usermanage/wakeaccount.do',{params: {id:row.userIDNumber}})
            .then(response => {
  
             });
@@ -232,7 +248,7 @@ export default {
       //封禁用户
       handleForbide(index, row) {
 
-      axios.get('url',{params: {id:row.userIDNumber}})
+      axios.get('/admin/usermanage/stopaccount.do',{params: {id:row.userIDNumber}})
            .then(response => {
        
             });
@@ -243,11 +259,9 @@ export default {
 
 
       },
-      handleSizeChange(val) {
-        console.log(`每页 ${val} 条`);
-      },
+      
       handleCurrentChange(val) {
-        console.log(`当前页: ${val}`);
+        this.pagedivde(val);
       }
     }
   }

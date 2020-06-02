@@ -77,8 +77,8 @@
       <el-button type="text" @click="setTag1(scope.row)">取消任务</el-button>
 
 <el-dialog title="取消任务" :visible.sync="dialogFormVisible1">
-  <el-form :model="upform1">
-  <el-form-item label="理由类型">
+  <el-form :model="upform1" ref="upform1" :rules="rules">
+  <el-form-item label="理由类型" prop="type">
     <el-select v-model="upform1.type" placeholder="请选择理由类型" >
       <el-option label="我已完成" value="1"></el-option>
       <el-option label="太久无人接单" value="2"></el-option>
@@ -87,14 +87,14 @@
       <el-option label="其他" value="5"></el-option>
     </el-select>
   </el-form-item>
-    <el-form-item label="理由" :label-width="formLabelWidth">
+    <el-form-item label="理由" :label-width="formLabelWidth" prop="content">
       <el-input type="textarea" v-model="upform1.content" autocomplete="off"></el-input>
     </el-form-item>
 
   </el-form>
   <div slot="footer" class="dialog-footer">
     <el-button @click="dialogFormVisible1 = false">取 消</el-button>
-    <el-button type="primary" @click="handleCancel()">确 定</el-button>
+    <el-button type="primary" @click="handleCancel('upform1')">确 定</el-button>
   </div>
 </el-dialog>
         <el-button type="primary" @click="setTag2(scope.row)">已收到</el-button>
@@ -114,15 +114,15 @@
 <el-button type="text" size="mini" style="margin:2px 2px 2px 40px" @click="setTag3(scope.row)">反馈</el-button>
 
 <el-dialog title="任务反馈" :visible.sync="dialogFormVisible2">
-  <el-form :model="upform2">
-    <el-form-item label="理由" :label-width="formLabelWidth">
+  <el-form :model="upform2"  ref="upform2" :rules="rules2">
+    <el-form-item label="理由" :label-width="formLabelWidth" prop="content">
       <el-input type="textarea" v-model="upform2.content" autocomplete="off"></el-input>
     </el-form-item>
 
   </el-form>
   <div slot="footer" class="dialog-footer">
     <el-button @click="dialogFormVisible2 = false">取 消</el-button>
-    <el-button type="primary" @click="handleBack()">确 定</el-button>
+    <el-button type="primary" @click="handleBack('upform2')">确 定</el-button>
   </div>
 </el-dialog>
    </template>     
@@ -184,6 +184,20 @@ export default {
         pos:'0',
         result:'',
         tid:'',
+        rules: {
+          type: [
+            { required: true, message: '请选择理由类型', trigger: 'change' }
+          ],
+          content: [
+            { required: true, message: '请输入描述', trigger: 'blur' }
+          ]
+        },
+        rules2: {
+          
+          content: [
+            { required: true, message: '请输入反馈描述', trigger: 'blur' }
+          ]
+        }
       }
     },
     //初始化任务列表
@@ -248,7 +262,9 @@ export default {
         var sendJson =this.upform1;
       var self=this;
       console.log(sendJson);
-        axios.delete('/task/sender/cancel/'+sendJson.id,{data:sendJson})
+      this.$refs[formName].validate((valid) => {
+          if (valid) {
+           axios.delete('/task/sender/cancel/'+sendJson.id,{data:sendJson})
            .then(response => {
               
               if(response.status=="200")
@@ -266,6 +282,13 @@ export default {
         });
               }
             });
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
+
+        
         
     	this.dialogFormVisible1 = false;
     },
@@ -279,7 +302,9 @@ export default {
     handleBack(){
     var sendJson = this.upform2;
       var self=this;
-        axios.post('/feedback/suitTask',sendJson)
+      this.$refs[formName].validate((valid) => {
+          if (valid) {
+            axios.post('/feedback/suitTask',sendJson)
            .then(response => {
               
               if(response.status=="200")
@@ -297,6 +322,12 @@ export default {
         });
               }
             });
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
+        
     	this.dialogFormVisible2 = false;
     },
     }

@@ -86,7 +86,19 @@
     </el-table-column>
     
   </el-table>
+  <div class="block">
+    <span class="demonstration"></span>
+    <el-pagination
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page.sync="currentPage"
+      :page-size="10"
+      layout="total,prev, pager, next, jumper"
+      :total="totalpage">
+    </el-pagination>
+  </div>
       </el-main>
+
     </el-container>
   </el-container>
 </template>
@@ -123,19 +135,21 @@ export default {
         url:require('@/assets/logo.png'),
         visible: false,
          tableData:'',
-        pos:{start:'0'},
+        pos:{start:1},
         form:{
-          start:'0',
+          start:1,
           type:'',
         },
         result:'',
         tid:{id:''},
-        
+        totalpage:100,
+        currentPage:1,
       }
     },
     
     //初始化任务列表
     created: function () {
+      this.form.type='0';
       this.getData();
       
     },
@@ -148,7 +162,8 @@ export default {
       .then(response => {
            console.log(response.data);
               self.tableData = JSON.parse(JSON.stringify(response.data));
-            })
+            });
+        this.getPage();
       },
 
       select(id){
@@ -157,7 +172,22 @@ export default {
            .then(response => {
               self.tableData = JSON.parse(JSON.stringify(response.data));
             });
-    	},
+            this.getTypePage();
+      },
+      getPage(){
+        var self=this;
+        axios.get('/task/getCount/unacceptedTask')
+        .then(response => {
+              self.totalpage=parseInt(response.data.count);
+            });
+      },
+      getTypePage(){
+        var self=this;
+        axios.get('/task/getCount/UnacceptedTaskByType/'+self.form.type)
+        .then(response => {
+              self.totalpage=parseInt(response.data.count);
+            });
+      },
     //筛选
     	select1(){
     	this.form.type=1;
@@ -218,6 +248,18 @@ export default {
     	
     	
     	},
+      //处理跳页
+      handleCurrentChange(val) {
+        this.pos.start=val;
+        if(this.form.type=='0'){
+          this.getData();
+        }
+        else{
+            this.form.start=val;
+            var sendJson=this.form;
+            this.select(sendJson);
+        }
+      },
     	menu(){
     this.$router.push('/userindex');
     }
