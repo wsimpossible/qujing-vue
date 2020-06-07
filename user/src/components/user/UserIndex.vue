@@ -28,7 +28,11 @@
       <el-button  @click="charge()"> 充值 </el-button>
       <br /><br />
       <el-button  @click="postal()"> 提现 </el-button>
-      <br /><br />
+      <br />
+      <el-button  type="text" @click="crecord">消费记录 </el-button>
+      <br />
+      <el-button  type="text" @click="srecord">充值记录 </el-button>
+      <br />
       <el-button  type="text" @click="listnews()">查看通知</el-button>
     </el-aside>
     
@@ -49,7 +53,12 @@
           </div>
           <div class="col">
             <h5>账号状态：</h5>
-          </div> 
+          </div>
+          <div class="col">
+            <el-button  type="text" @click="updatepwd()">修改密码 </el-button>
+            
+          </div>
+
        </div>
        <div style="float:left">
          <div class="col">
@@ -65,10 +74,18 @@
             <h5>{{user.points}}</h5>
           </div>
           <div class="col">
-            <h5>{{user.state}}</h5>
+            <h5>{{userstatus[user.state] }}</h5>
           </div>
+          <br />
+          <div class="col">
+            
+            <el-button  type="text" @click="quit()">退出登录 </el-button>
+            
+          </div>
+        
+          
        </div>
- 
+        
        </el-card>
       
       </el-main>
@@ -115,12 +132,18 @@ export default {
       return {
         url:require('@/assets/logo.png'),
         user:'',
+        userstatus:{
+          '0':'未激活',
+          '1':'已激活',
+          '2':'冻结中',
+        },
       }
     },
     created: function () {
-   
+      var token = localStorage.getItem('token');
+       axios.defaults.headers.common['Authorization'] = token;
       var self=this;
-        axios.get('/user/getUserPoints')
+        axios.get('/user/getUserInfo')
            .then(response => {
              console.log(response.data)
             this.user=response.data;
@@ -150,6 +173,27 @@ export default {
     listnews(){
     this.$router.push('/userindex/news');
     },
+    crecord(){
+    this.$router.push('/userindex/czrecord');
+    },
+    srecord(){
+    this.$router.push('/userindex/sprecord');
+    },
+    updatepwd()
+    {
+      this.$router.push('/userindex/updatepwd');
+
+    },
+    quit(){
+      axios.get('/authenticated/logout').then(response => {
+             if(response.status=="200")
+             {
+               localStorage.setItem('token',null);
+              localStorage.setItem('islogin',0);
+              this.$router.push('/');
+             }
+            });
+    }
     }
     
     

@@ -8,6 +8,7 @@
       :fit="contain"></el-image>
 <div style="float:left">我发布的任务
 </div>
+<homebtn></homebtn>
     </el-header>
 <el-container style="height: 500px; width: 1200px; margin: auto">
       <el-aside width="200px"
@@ -17,7 +18,6 @@
       <br /><br />
       <el-button  @click="menu()"> 返回</el-button>
     </el-aside>
-    
       <el-main style="height: 500px; width: 1000px; margin:0">
        <div style="height: 200px; width: 950px; margin:auto">
         <el-table
@@ -41,7 +41,7 @@
       label="加急"
       width="100">
       <template slot-scope="scope">
-        <span style="margin-left: 10px">{{ scope.row.expedited }}</span>
+        <span style="margin-left: 10px">{{ quick[scope.row.expedited]  }}</span>
       </template>
     </el-table-column>
     <el-table-column
@@ -52,10 +52,10 @@
       </template>
     </el-table-column>
     <el-table-column
-      label="是否已接单"
+      label="任务状态"
       width="100">
       <template slot-scope="scope">
-        <span style="margin-left: 10px">{{ scope.row.state }}</span>
+        <span style="margin-left: 10px">{{ taskstatus[scope.row.state]  }}</span>
       </template>
     </el-table-column>
     <el-table-column
@@ -67,14 +67,14 @@
     </el-table-column>
     <el-table-column
       label="接单人"
-      width="100">
+      width="150">
       <template slot-scope="scope">
         <span style="margin-left: 10px">{{ scope.row.receiverid }}</span>
       </template>
     </el-table-column>
     <el-table-column label="操作" width="300">
       <template slot-scope="scope">
-      <el-button type="text" @click="setTag1(scope.row)">取消任务</el-button>
+      <el-button type="text" @click="setTag1(scope.row)" v-if="scope.row.state=='1'||scope.row.state=='2'" >取消任务</el-button>
 
 <el-dialog title="取消任务" :visible.sync="dialogFormVisible1">
   <el-form :model="upform1" ref="upform1" :rules="rules">
@@ -97,7 +97,7 @@
     <el-button type="primary" @click="handleCancel('upform1')">确 定</el-button>
   </div>
 </el-dialog>
-        <el-button type="primary" @click="setTag2(scope.row)">已收到</el-button>
+        <el-button type="primary" @click="setTag2(scope.row)" v-if="scope.row.state=='5'||scope.row.state=='2'" >已收到</el-button>
 
 <el-dialog
   title="提示"
@@ -111,7 +111,7 @@
   </span>
 </el-dialog>
 
-<el-button type="text" size="mini" style="margin:2px 2px 2px 40px" @click="setTag3(scope.row)">反馈</el-button>
+<el-button type="text" size="mini" style="margin:2px 2px 2px 40px" @click="setTag3(scope.row)" v-if="scope.row.state!='1'"  >反馈</el-button>
 
 <el-dialog title="任务反馈" :visible.sync="dialogFormVisible2">
   <el-form :model="upform2"  ref="upform2" :rules="rules2">
@@ -169,7 +169,7 @@ export default {
       dialogFormVisible2:false,
         url:require('@/assets/logo.png'),
         visible: false,
-         tableData1:'',
+         tableData1:[],
         tableData2:'',
         upform1:{
           id:'',
@@ -181,9 +181,27 @@ export default {
         task:'',
         content:'',
         },
-        pos:'0',
+        pos:'1',
         result:'',
         tid:'',
+        quick:{
+          '0':'否',
+          '1':'是',
+        },
+        userstatus:{
+          '0':'未激活',
+          '1':'已激活',
+          '2':'冻结中',
+        },
+        taskstatus:{
+          '1':'未被接受',
+          '2':'已被接受',
+          '3':'取消审核中',
+          '4':'取消审核中',
+          '5':'已被完成',
+          '6':'已被确认',
+          '7':'已被删除',
+        },
         rules: {
           type: [
             { required: true, message: '请选择理由类型', trigger: 'change' }
@@ -202,6 +220,14 @@ export default {
     },
     //初始化任务列表
     created: function () {
+      this.getdata();
+      
+        
+    },
+    methods:{
+      getdata(){
+        var token = localStorage.getItem('token');
+       axios.defaults.headers.common['Authorization'] = token;
       var sendJson =this.pos;
     console.log(sendJson);
       var self=this;
@@ -210,14 +236,28 @@ export default {
              if(response.data != null) {
                console.log(response.data)
              if(response.data!= null)
-              self.tableData1 = JSON.parse(JSON.stringify(response.data));
-            if(response.data!=null)
               self.tableData2 = JSON.parse(JSON.stringify(response.data));
+              self.devidetable();
            }
             });
-        
+
+      },
+    devidetable(){
+      var jr=[];
+      for(var i in this.tableData2)
+      {
+        if(typeof(this.tableData2[i].receiver)!=undefined&&this.tableData2[i].receiver!=null)
+        this.tableData2[i].task.receiverid=this.tableData2[i].receiver.username;
+      }
+      for(var i in this.tableData2)
+      {
+
+      jr.push(this.tableData2[i].task);
+      }
+      this.tableData1=jr;
+      console.log(this.tableData1);
+
     },
-    methods:{
     menu(){
     this.$router.push('/userindex');
     },
@@ -247,6 +287,7 @@ export default {
           message: '确认任务成功',
           type: 'success'
         });
+        this.getdata();
               }else{
               this.$notify({
           title: '失败',
@@ -262,8 +303,7 @@ export default {
         var sendJson =this.upform1;
       var self=this;
       console.log(sendJson);
-      this.$refs[formName].validate((valid) => {
-          if (valid) {
+      
            axios.delete('/task/sender/cancel/'+sendJson.id,{data:sendJson})
            .then(response => {
               
@@ -274,6 +314,7 @@ export default {
           message: '取消请求提交成功',
           type: 'success'
         });
+        this.getdata();
               }else{
               this.$notify({
           title: '失败',
@@ -282,11 +323,7 @@ export default {
         });
               }
             });
-          } else {
-            console.log('error submit!!');
-            return false;
-          }
-        });
+          
 
         
         
@@ -302,8 +339,7 @@ export default {
     handleBack(){
     var sendJson = this.upform2;
       var self=this;
-      this.$refs[formName].validate((valid) => {
-          if (valid) {
+      
             axios.post('/feedback/suitTask',sendJson)
            .then(response => {
               
@@ -314,6 +350,7 @@ export default {
           message: '反馈成功',
           type: 'success'
         });
+        this.getdata();
               }else{
               this.$notify({
           title: '失败',
@@ -322,11 +359,7 @@ export default {
         });
               }
             });
-          } else {
-            console.log('error submit!!');
-            return false;
-          }
-        });
+          
         
     	this.dialogFormVisible2 = false;
     },

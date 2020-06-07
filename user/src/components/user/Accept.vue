@@ -8,6 +8,7 @@
       :fit="contain"></el-image>
 <div style="float:left">任务列表
 </div>
+<homebtn></homebtn>
     </el-header>
 <el-container style="height: 500px; width: 1200px; margin: auto">
       <el-aside width="200px"
@@ -17,13 +18,12 @@
       <br /><br />
       <el-button  type="primary" @click="select2()"> 文件代送 </el-button>
       <br /><br />
-      <el-button  type="primary" @click="select3()"> 文件代取 </el-button>
+      
+      <el-button  type="primary" @click="select3()"> 食堂代买</el-button>
       <br /><br />
-      <el-button  type="primary" @click="select4()"> 食堂代买</el-button>
+      <el-button  type="primary" @click="select4()"> 物品代购</el-button>
       <br /><br />
-      <el-button  type="primary" @click="select5()"> 物品代购</el-button>
-      <br /><br />
-      <el-button  type="primary" @click="select6()"> 其他</el-button>
+      <el-button  type="primary" @click="select5()"> 其他</el-button>
       <br /><br />
       <el-button  @click="menu()"> 返回</el-button>
     </el-aside>
@@ -43,7 +43,7 @@
       label="类型"
       width="100">
       <template slot-scope="scope">
-        <span style="margin-left: 10px">{{ scope.row.ttid }}</span>
+        <span style="margin-left: 10px">{{ tasktype[scope.row.ttid]  }}</span>
       </template>
     </el-table-column>
     <el-table-column
@@ -71,7 +71,7 @@
       label="加急"
       width="100">
       <template slot-scope="scope">
-        <span style="margin-left: 10px">{{ scope.row.expedited }}</span>
+        <span style="margin-left: 10px">{{ quick[scope.row.expedited]  }}</span>
       </template>
     </el-table-column>
     <el-table-column label="操作">
@@ -135,6 +135,7 @@ export default {
         url:require('@/assets/logo.png'),
         visible: false,
          tableData:'',
+         tableData2:'',
         pos:{start:1},
         form:{
           start:1,
@@ -144,11 +145,38 @@ export default {
         tid:{id:''},
         totalpage:100,
         currentPage:1,
+        tasktype:{
+          '1':'快递代取',
+          '2':'文件代送',
+          '3':'食堂代买',
+          '4':'物品代购',
+          '5':'其他',
+        },
+        quick:{
+          '0':'否',
+          '1':'是',
+        },
+        userstatus:{
+          '0':'未激活',
+          '1':'已激活',
+          '2':'冻结中',
+        },
+        taskstatus:{
+          '1':'未被接受',
+          '2':'已被接受',
+          '3':'取消审核中',
+          '4':'取消审核中',
+          '5':'已被完成',
+          '6':'已被确认',
+          '7':'已被删除',
+        },
       }
     },
     
     //初始化任务列表
     created: function () {
+      var token = localStorage.getItem('token');
+       axios.defaults.headers.common['Authorization'] = token;
       this.form.type='0';
       this.getData();
       
@@ -165,14 +193,32 @@ export default {
             });
         this.getPage();
       },
+      devidetable(){
+      var jr=[];
+      
+      if(this.tableData2.length>='1')
+      for(var i in this.tableData2)
+      {
+
+      jr.push(this.tableData2[i].task);
+      }
+      this.tableData=jr;
+      
+
+    },
 
       select(id){
         var self=this;
+        console.log('/task/listUnacceptedTaskByType/'+id.start+'/'+id.type);
         this.$http.get('/task/listUnacceptedTaskByType/'+id.start+'/'+id.type)
            .then(response => {
-              self.tableData = JSON.parse(JSON.stringify(response.data));
-            });
+              self.tableData2 = JSON.parse(JSON.stringify(response.data));
+            this.devidetable();
             this.getTypePage();
+      
+            });
+            
+            
       },
       getPage(){
         var self=this;
@@ -230,12 +276,16 @@ export default {
       var self=this;
     	this.$http.put('/task/acceptTask/'+sendJson)
            .then(response => {
-           if(response.status=="200")
+           if(response.status=="200"){
              this.$message({
           showClose: true,
-          message: '任务接受成功'
-            
+          message: '任务接受成功',
+           type: 'success'  
         });
+        this.getData();
+
+           }
+             
   
           else{
             this.$message({

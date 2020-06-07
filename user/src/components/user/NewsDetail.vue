@@ -7,6 +7,7 @@
       :fit="contain"></el-image>
 <div style="float:left">反馈详细
 </div>
+<homebtn></homebtn>
     </el-header>
 
     <el-container >

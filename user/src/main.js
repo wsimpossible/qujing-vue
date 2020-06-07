@@ -6,18 +6,22 @@ import router from './router'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import axiosInit from "./axios-init";
-
+import Homebtn from "./components/homebtn/homebtn.vue"
 
 window.axios = axiosInit();
 Vue.prototype.$http = window.axios;
 
 Vue.config.productionTip = false
-Vue.use(ElementUI)
+Vue.use(ElementUI);
+Vue.component("homebtn",Homebtn);
+
 /* eslint-disable no-new */
+
+
 
 router.beforeEach((to, from, next) => {
   let islogin = localStorage.getItem("islogin");
-  
+  islogin = Boolean(Number(islogin));
 
   if(to.path == "/"||to.path == "/register"||to.path == "/forget"){
     

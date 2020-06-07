@@ -3,6 +3,9 @@ import Router from 'vue-router'
 import Login from '@/components/Login'
 import Register from '@/components/Register'
 import Forget from '@/components/Forget'
+import updatepwd from '@/components/user/updatepwd'
+import sprecord from '@/components/user/sprecord'
+import czrecord from '@/components/user/czrecord'
 import UserIndex from '@/components/user/UserIndex'
 import Charge from '@/components/user/Charge'
 import Postal from '@/components/user/Postal'
@@ -50,6 +53,30 @@ export default new Router({
                  requireAuth: true
                 }
         },
+        {
+            path: '/userindex/updatepwd',
+            name: 'updatepwd',
+            component: updatepwd,
+            meta: { // 在路由配置中加入meta:{requireAuth: true}
+                   requireAuth: true
+                  }
+          },
+          {
+            path: '/userindex/sprecord',
+            name: 'sprecord',
+            component: sprecord,
+            meta: { // 在路由配置中加入meta:{requireAuth: true}
+                   requireAuth: true
+                  }
+          },
+          {
+            path: '/userindex/czrecord',
+            name: 'czrecord',
+            component: czrecord,
+            meta: { // 在路由配置中加入meta:{requireAuth: true}
+                   requireAuth: true
+                  }
+          },
         {
             path: '/userindex/newsdetail',
             name: 'NewsDetail',

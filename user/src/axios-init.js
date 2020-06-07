@@ -11,10 +11,10 @@ export default()=>{
    //配置发送请求前的拦截器 可以设置token信息 
    axios.interceptors.request.use(config => {
        var token = localStorage.getItem('token');
-	   if(token==null ||token!=axios.defaults.headers.common['Authorization'])
+
        axios.defaults.headers.common['Authorization'] = token;
-       console.log(token);
-       
+
+  
            return config;
        }, error => {
            loadingInstance.close();
@@ -24,19 +24,21 @@ export default()=>{
    axios.interceptors.response.use(res => {
        //对响应数据做些事
        console.log(res.status);
+       
        const authorization = res.headers.authorization;
        localStorage.setItem('token',authorization);
-       console.log(authorization);
-       localStorage.setItem('islogin',true);
+ 
+       if(typeof(localStorage.getItem('token'))!=undefined&&typeof(localStorage.getItem('token'))!=null)
+       localStorage.setItem('islogin',1);
        if(res.status=="401"){
         localStorage.setItem('token',null);
-        localStorage.setItem('islogin',false);
+        localStorage.setItem('islogin',0);
         //全局登陆过滤，当判读token失效或者没有登录时 返回登陆页面
         router.push('/');
         return false;
     };
-       
-       return res;
+    return Promise.resolve(res);
+      
    	},
    	error => {
    	  alert('请求失败，请稍后重试！')

@@ -7,6 +7,7 @@
       :fit="contain"></el-image>
 <div style="float:left">查看通知
 </div>
+<homebtn></homebtn>
     </el-header>
 
 <el-container>
@@ -109,10 +110,7 @@ export default {
     },
     //初始化表格
     created: function () {
-        axios.get('url')
-           .then(response => {
-              this.tableData = response.data
-            })
+        
         
     },
     methods: {

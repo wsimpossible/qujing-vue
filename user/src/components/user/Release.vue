@@ -8,6 +8,7 @@
       :fit="contain"></el-image>
 <div style="float:left">发布任务
 </div>
+<homebtn></homebtn>
     </el-header>
 <el-container style="height: 500px; width: 1200px; margin: auto">
       <el-aside width="200px"
@@ -20,10 +21,10 @@
        <div>
        <el-form ref="form" :model="form" :rules="rules" label-width="120px">
   <el-form-item label="任务名称" prop="name">
-    <el-input v-model="form.name" autocomplete="off" placeholder="请输入简单描述（取货地址与目的地）"></el-input>
+    <el-input v-model="form.name" autocomplete="off" placeholder="请输入简单描述（取货地址与目的地）" style="width:500px;float:left"></el-input>
   </el-form-item>
   <el-form-item label="任务描述" prop="content">
-    <el-input type="textarea" v-model="form.content" autocomplete="off" placeholder="请输入任务描述（50汉字以内，标注姓名、取货码等必须信息）"></el-input>
+    <el-input type="textarea" v-model="form.content" autocomplete="off" style="width:500px;float:left" placeholder="请输入任务描述（50汉字以内，标注姓名、取货码等必须信息）"></el-input>
   </el-form-item>
   <el-form-item label="支付积分" prop="points">
     <el-col :span="5">
@@ -41,16 +42,16 @@
     </el-col>
   </el-form-item>
   <el-form-item label="发布为加急" >
-    <el-switch v-model="form.quick" ></el-switch>
+    <el-switch v-model="form.quick" style="float:left" ></el-switch>
   </el-form-item>
   <el-form-item label="服务类型" prop="ttid">
-    <el-select v-model="form.ttid" autocomplete="off" placeholder="请选择服务类型" >
+    <el-select v-model="form.ttid" autocomplete="off" style="float:left" placeholder="请选择服务类型" >
       <el-option label="快递代取" value="1"></el-option>
       <el-option label="文件代送" value="2"></el-option>
-      <el-option label="文件代取" value="3"></el-option>
-      <el-option label="食堂代买" value="4"></el-option>
-      <el-option label="物品代购" value="5"></el-option>
-      <el-option label="其他" value="6"></el-option>
+      
+      <el-option label="食堂代买" value="3"></el-option>
+      <el-option label="物品代购" value="4"></el-option>
+      <el-option label="其他" value="5"></el-option>
     </el-select>
   </el-form-item>
  
@@ -93,6 +94,24 @@ import axios from 'axios'
 export default {
   name: 'Release',
   data() {
+  let validpoint=(rule,value,callback)=> {
+                console.log(value);
+                // 积分不能为负
+                if (value<=0) {
+                    return callback(new Error('积分不能为负数或0'));
+                };
+                
+                callback();
+            };
+  let validtime =(rule,value,callback)=> {
+                console.log(value);
+                // 时间不能小于10分钟
+                if (value<=10) {
+                    return callback(new Error('时间不能小于十分钟'));
+                };
+                
+                callback();
+            };
       return {
         url:require('@/assets/logo.png'),
         form: {
@@ -117,11 +136,13 @@ export default {
           ],
           points:[
       { required: true, message: '不能为空'},
-      { type: 'number', message: '必须为数字'}
+      { type: 'number', message: '必须为数字'},
+      {validator:validpoint,trigger:'blur'}
     ],
           ttl:[
       { required: true, message: '截止时间不能为空'},
-      { type: 'number', message: '截止时间必须为数字值'}
+      { type: 'number', message: '截止时间必须为数字值'},
+      {validator:validtime,trigger:'blur'}
     ],
           ttid : [
             { required: true, message: '请选择任务类型', trigger: 'change' }
@@ -130,8 +151,10 @@ export default {
       }
     },
     created: function () {
+      var token = localStorage.getItem('token');
+       axios.defaults.headers.common['Authorization'] = token;
       var self=this;
-        axios.get('/user/getUserPoints')
+        axios.get('/user/getUserInfo')
            .then(response => {
              console.log(response.data)
             this.user=response.data;
@@ -139,6 +162,7 @@ export default {
         
     },
     methods:{
+    
     menu(){
     this.$router.push('/userindex');
     },
@@ -152,7 +176,7 @@ export default {
     var sendJson =this.form;
       var self=this;
       console.log(sendJson);
-      this.$refs[formName].validate((valid) => {
+      this.$refs[form].validate((valid) => {
           if (valid) {
             this.$http.post('/task/post',sendJson)
         .then((response) => {

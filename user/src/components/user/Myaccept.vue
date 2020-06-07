@@ -8,6 +8,7 @@
       :fit="contain"></el-image>
 <div style="float:left">我接受的任务
 </div>
+<homebtn></homebtn>
     </el-header>
 <el-container style="height: 500px; width: 1200px; margin: auto">
       <el-aside width="200px"
@@ -41,7 +42,7 @@
       label="加急"
       width="100">
       <template slot-scope="scope">
-        <span style="margin-left: 10px">{{ scope.row.expedited }}</span>
+        <span style="margin-left: 10px">{{ quick[scope.row.expedited]  }}</span>
       </template>
     </el-table-column>
     <el-table-column
@@ -64,12 +65,12 @@
       label="任务状态"
       width="100">
       <template slot-scope="scope">
-        <span style="margin-left: 10px">{{ scope.row.state }}</span>
+        <span style="margin-left: 10px">{{ taskstatus[scope.row.state]  }}</span>
       </template>
     </el-table-column>
     <el-table-column label="操作" width="150">
       <template slot-scope="scope">
-        <el-button size="mini"  type="primary" @click="handleDeal(scope.$index, scope.row)">处理任务</el-button>
+        <el-button size="mini"  type="primary" @click="handleDeal(scope.$index, scope.row)" v-if="scope.row.state!='6'">处理任务</el-button>
         <el-button type="text" size="mini" @click="setTag1(scope.row)">举报</el-button>
 
 <el-dialog title="举报任务" :visible.sync="dialogFormVisible2">
@@ -140,7 +141,32 @@ export default {
         content:'',
         id:'',
         },
-        pos:'0',
+        pos:'1',
+        tasktype:{
+          '1':'快递代取',
+          '2':'文件代送',
+          '3':'食堂代买',
+          '4':'物品代购',
+          '5':'其他',
+        },
+        quick:{
+          '0':'否',
+          '1':'是',
+        },
+        userstatus:{
+          '0':'未激活',
+          '1':'已激活',
+          '2':'冻结中',
+        },
+        taskstatus:{
+          '1':'未被接受',
+          '2':'已被接受',
+          '3':'取消审核中',
+          '4':'取消审核中',
+          '5':'已被完成',
+          '6':'已被确认',
+          '7':'已被删除',
+        },
         result:'',
         rules: {
           type: [
@@ -154,7 +180,13 @@ export default {
     },
     //初始化任务列表
     created: function () {
-     
+     this.getdata();
+        
+    },
+    methods:{
+      getdata(){
+        var token = localStorage.getItem('token');
+       axios.defaults.headers.common['Authorization'] = token;
     var sendJson = this.pos;
     console.log(sendJson);
       var self=this;
@@ -163,10 +195,23 @@ export default {
              console.log(response.data)
               self.tableData1 = JSON.parse(JSON.stringify(response.data));
               self.tableData2 = JSON.parse(JSON.stringify(response.data));
+              this.devidetable();
             });
-        
+
+
+      },
+      devidetable(){
+      var jr=[];
+      
+      for(var i in this.tableData2)
+      {
+
+      jr.push(this.tableData2[i].task);
+      }
+      this.tableData1=jr;
+      console.log(this.tableData1);
+
     },
-    methods:{
     menu(){
     this.$router.push('/userindex');
     },
@@ -190,12 +235,13 @@ export default {
           message: '举报提交成功',
           type: 'success'
         });
-        this.$router.push('userindex');
+        this.getdata();
+       
 		} else  {
     	this.$notify({
           title: '失败',
           message: '举报提交失败',
-          type: 'success'
+          
         });
 		}
             });

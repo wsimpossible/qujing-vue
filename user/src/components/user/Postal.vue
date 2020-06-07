@@ -8,6 +8,7 @@
       :fit="contain"></el-image>
 <div style="float:left">提现
 </div>
+<homebtn></homebtn>
     </el-header>
 <el-container style="height: 500px; width: 1200px; margin: auto">
       <el-aside width="200px"
@@ -17,7 +18,7 @@
     </el-aside>
     
       <el-main>
-       <el-form :model="form"  label-width="100px" width="400px">
+       <el-form :model="form"  label-width="200px" width="400px">
   <el-form-item
     label="输入提现金额"
     
@@ -26,7 +27,7 @@
       { type: 'number', message: '提现金额必须为数字值'}
     ]"
   >
-    <el-input  v-model.number="form.amount" autocomplete="off" width="300px"></el-input>
+    <el-input  v-model.number="form.amount" autocomplete="off" width="200px"></el-input>
   </el-form-item>
   <el-form-item
     label="输入支付宝账户（手机号）"
@@ -36,7 +37,7 @@
       { type: 'number', message: '手机号必须为数字值'}
     ]"
   >
-    <el-input  v-model.number="form.amount" autocomplete="off" width="300px"></el-input>
+    <el-input  v-model.number="form.aliAccount" autocomplete="off" width="200px"></el-input>
   </el-form-item>
   <el-form-item>
     <el-button type="primary" @click="submitForm">提交</el-button>
@@ -92,14 +93,26 @@ export default {
       var sendJson=this.form
       axios.put('/pay/withdraw',sendJson)
            .then(response => {
+             if(response.status=='200'){
+               this.$notify({
+          title: '成功',
+          message: '提现请求成功',
+          type: 'success'
+        });
+
+             }else{
+               this.$notify({
+          title: '失败',
+          message: '提现请求失败',
+          
+        });
+
+             }
             });
 
 
     },
-    resetForm(){
-      this.form.totalAmount='';
-
-    }
+    
     }
     
     

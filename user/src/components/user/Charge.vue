@@ -8,6 +8,7 @@
       :fit="contain"></el-image>
 <div style="float:left">充值
 </div>
+<homebtn></homebtn>
     </el-header>
 <el-container style="height: 500px; width: 1200px; margin: auto">
       <el-aside width="200px"

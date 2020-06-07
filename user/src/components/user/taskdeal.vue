@@ -7,6 +7,7 @@
       :fit="contain"></el-image>
 <div style="float:left">处理任务
 </div>
+<homebtn></homebtn>
     </el-header>
 
     <el-container >
@@ -39,23 +40,23 @@
     </div>
     <div style="height:380px; width:400px;float:left">
     	<div style="height:45px">
-    	<b><p>{{detail.name}}</p></b>
+    	<b><p>{{detail.task.name}}</p></b>
         </div>
         <div style="height:45px">
-    	<b><p>{{detail.points}}</p></b>
+    	<b><p>{{detail.task.points}}</p></b>
         </div>
         <div style="height:45px">
-    	<b><p>{{detail.expedited}}</p></b>
+    	<b><p>{{quick[detail.task.expedited] }}</p></b>
         </div>
         
         <div style="height:100px">
-    	<b><p>{{detail.content}}</p></b>
+    	<b><p>{{detail.task.content}}</p></b>
         </div>
         <div style="height:45px">
-    	<b><p>{{detail.senderid}}</p></b>
+    	<b><p>{{detail.sender.username}}</p></b>
         </div>
     	<div style="height:100px">
-    	<b><p>{{detail.deadline}}</p></b>
+    	<b><p>{{detail.task.deadline}}</p></b>
         </div>
         
     </div>
@@ -66,7 +67,7 @@
       <el-button type="primary" @click="dialogFormVisible1 = true">取消任务</el-button>
 
 <el-dialog title="取消任务" :visible.sync="dialogFormVisible1">
-  <el-form :model="upform1" ref="upform1" :rules="rules">
+  <el-form ref="upform1" :model="upform1"  :rules="rules">
     <el-form-item label="理由类型" prop="type">
     <el-select v-model="upform1.type" placeholder="请选择理由类型" >
       <el-option label="我已完成" value="1"></el-option>
@@ -154,6 +155,31 @@ export default {
           score2:''
         },
        ID:'',
+       tasktype:{
+          '1':'快递代取',
+          '2':'文件代送',
+          '3':'食堂代买',
+          '4':'物品代购',
+          '5':'其他',
+        },
+        quick:{
+          '0':'否',
+          '1':'是',
+        },
+        userstatus:{
+          '0':'未激活',
+          '1':'已激活',
+          '2':'冻结中',
+        },
+        taskstatus:{
+          '1':'未被接受',
+          '2':'已被接受',
+          '3':'取消审核中',
+          '4':'取消审核中',
+          '5':'已被完成',
+          '6':'已被确认',
+          '7':'已被删除',
+        },
        upform1:{
        		id:'',
           type:'',
@@ -188,6 +214,8 @@ export default {
     },
     //任务详情页
     created: function () {
+      var token = localStorage.getItem('token');
+       axios.defaults.headers.common['Authorization'] = token;
      this.detail=this.$route.query.detail;  
     var sendJson = this.detail.id;
     console.log(sendJson);
@@ -209,9 +237,8 @@ export default {
      var sendJson = this.upform1;
      console.log(sendJson);
       var self=this;
-      this.$refs[formName].validate((valid) => {
-          if (valid) {
-            axios.delete('/task/receiver/cancel/'+self.detail.id,{data:sendJson})
+      
+            axios.delete('/task/receiver/cancel/'+self.detail.task.id,{data:sendJson})
            .then(response => {
              
               if(response.status=="200")
@@ -225,26 +252,21 @@ export default {
               this.$notify({
           title: '失败',
           message: '取消请求失败',
-          type: 'success'
+          
         });
               }
             });
             
-          } else {
-            console.log('error submit!!');
-            return false;
-          }
-        });
+          
         
     	this.dialogFormVisible1 = false;
     },
     //任务反馈
     handleBack(){
-      this.upform2.task=this.detail.id;
+      this.upform2.task=this.detail.task.id;
      var sendJson = this.upform2;
       var self=this;
-      this.$refs[formName].validate((valid) => {
-          if (valid) {
+      
              axios.post('/feedback/suitTask',sendJson)
            .then(response => {
              
@@ -259,23 +281,20 @@ export default {
               this.$notify({
           title: '失败',
           message: '反馈提交失败',
-          type: 'success'
+          
         });
               }
             });
             
-          } else {
-            console.log('error submit!!');
-            return false;
-          }
-        });
+          
+       
        
     	this.dialogFormVisible2 = false;
     },
     compelete(){
   
       var self=this;
-        axios.put('/task/receiver/accomplish/'+self.detail.id)
+        axios.put('/task/receiver/accomplish/'+self.detail.task.id)
            .then(response => {
               self.result=JSON.parse(JSON.stringify(response.data));
               if(response.status=="200")
