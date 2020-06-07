@@ -1,5 +1,6 @@
 <template>
-  <el-container style="border:2px solid #C0C0C0;border-radius:10px;height: 600px; width: 1200px; margin: auto">
+  <!-- 将大容器设置nav类单独设置样式 -->
+  <el-container class="nav">
     <el-header class="logo">
 <el-image
       style="width: 55px; height: 55px;margin:5px;float:left"
@@ -7,23 +8,15 @@
       :fit="contain"></el-image>
 <div style="float:left">用户管理
 </div>
+
+<homebtn></homebtn>
+
     </el-header>
 
     <el-container >
     <el-aside width="200px"
               style="background-color: rgb(238, 241, 246)">
-      <el-menu router='true'>
-        <!-- 开启菜单中的router=true之后，点击菜单会把index作为路由跳转路径 -->
-        <el-menu-item index="/admin/report">
-          <i class="el-icon-setting"></i>举报管理
-        </el-menu-item>
-        <el-menu-item index="/admin/feedback">
-          <i class="el-icon-setting"></i>反馈管理
-        </el-menu-item>
-        <el-menu-item index="/admin/require">
-          <i class="el-icon-setting"></i>请求审核
-        </el-menu-item>
-      </el-menu>
+      <sidermenu></sidermenu>
     </el-aside>
     <el-main style="position:relative">
     	<el-table
@@ -109,7 +102,7 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       :current-page.sync="currentPage1"
-      :page-size="6"
+      :page-size="7"
       layout="total, prev, pager, next"
       :total="total">
     </el-pagination>
@@ -122,21 +115,8 @@
 </template>
 
 <style>
-.el-header {
-  background-color: #c1cbd8;
-  color: #333;
-  line-height: 60px;
-}
+@import 'admin.css';
 
-.el-aside {
-  color: #333;
-}
-.logo{
-    font-family:"Microsoft YaHei";
-	font-size:24px;
-	color:#33CCFF;
-	background-color:#CCFFFF
-}
 </style>
 
 <script>
@@ -177,9 +157,9 @@ export default {
       pagedivde(cpage){
         this.total=parseInt(this.alldata.length);
         var jr=[];
-        var start=(cpage-1)*6;
+        var start=(cpage-1)*7;
         var j=0;
-        for(var i=start;(i<this.total&&j<6);i++){
+        for(var i=start;(i<this.total&&j<7);i++){
           jr.push(this.alldata[i]);
           j++;
         }

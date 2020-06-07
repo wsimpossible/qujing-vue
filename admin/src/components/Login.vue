@@ -63,8 +63,9 @@ export default {
           if (valid) {
             axios.get('/adminlogin/login.do',{params: {username:sendJson.username,password:sendJson.password}})
       .then(response=>{
-      console.log(response.status);
-      if (response.status=='200') {
+     
+      if (response.data=='success') {
+      localStorage.setItem('islogin',1);
        self.$router.push('/admin');
     	
 		} else { 

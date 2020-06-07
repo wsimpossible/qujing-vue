@@ -1,5 +1,6 @@
 <template>
-  <el-container style="border:2px solid #C0C0C0;border-radius:10px;height: 600px; width: 1200px; margin: auto">
+  <!-- 将大容器设置nav类单独设置样式 -->
+  <el-container class="nav">
     <!-- 页面顶部 -->
     <el-header class="logo">
 <el-image
@@ -35,21 +36,7 @@
 </template>
 
 <style>
-.el-header {
-  background-color: #c1cbd8;
-  color: #333;
-  line-height: 60px;
-}
-
-.el-aside {
-  color: #333;
-}
-.logo{
-    font-family:"Microsoft YaHei";
-	font-size:24px;
-	color:#33CCFF;
-	background-color:#CCFFFF
-}
+@import 'admin.css';
 
 </style>
 
